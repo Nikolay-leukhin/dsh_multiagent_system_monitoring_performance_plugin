@@ -1,5 +1,7 @@
 # Пульт проектов (dsh-workbench-project-console)
 
+[![CI](https://github.com/Nikolay-leukhin/dsh_multiagent_system_monitoring_performance_plugin/actions/workflows/ci.yml/badge.svg)](https://github.com/Nikolay-leukhin/dsh_multiagent_system_monitoring_performance_plugin/actions/workflows/ci.yml)
+
 Локальный воркбенч для DSH Desktop: в одном месте лежат все рабочие проекты, текущие задачи
 и мелкие проекты, которые идут параллельно. По модулям видно статус, прогресс, задачи на контроле
 и риск по дедлайнам; карточку можно открыть, задать вопрос одной фразой или попросить Agent
@@ -7,7 +9,7 @@
 
 Воркбенч работает только локально и не публикуется в маркетплейс.
 
-> Это русская локализация [OliverLiy/projectHub](https://github.com/OliverLiy/projectHub) (MIT).
+> Это русская локализация [OliverLiy/projectHub](https://github.com/OliverLiy/projectHub) (MIT, © 2026 LY).
 > Переведены интерфейс, промпты, демо-данные и шаблоны документов; правила разбора русского языка
 > переписаны в `src/shared/aiplan.js` и `src/shared/query.js`.
 
