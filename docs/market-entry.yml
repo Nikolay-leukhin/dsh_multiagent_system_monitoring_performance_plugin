@@ -1,0 +1,12 @@
+url: https://github.com/OliverLiy/projectHub
+name: Пульт проектов
+category: productivity
+description:
+  ru: Управление несколькими параллельными проектами по модулям: статус, прогресс, задачи на контроле и риск по дедлайнам в одном экране. Внутри обзор, доска по модулям, доска по статусам, список, календарь, таймлайн и «на контроле» — семь разрезов, плюс создание, изменение, удаление и вопросы на естественном языке с читаемым предпросмотром изменений, подтверждением и отменой в один шаг.
+  en: Manage multiple parallel projects by module, with status, progress, follow-ups and deadline risk in one view. Includes overview, module board, status board, list, calendar, timeline and follow-up dashboards, plus natural-language create/update/delete/query that always previews a readable change list for confirmation before writing, with one-step undo.
+screenshots:
+  - https://raw.githubusercontent.com/OliverLiy/projectHub/master/docs/images/overview.png
+  - https://raw.githubusercontent.com/OliverLiy/projectHub/master/docs/images/kanban.png
+  - https://raw.githubusercontent.com/OliverLiy/projectHub/master/docs/images/calendar.png
+  - https://raw.githubusercontent.com/OliverLiy/projectHub/master/docs/images/timeline.png
+  - https://raw.githubusercontent.com/OliverLiy/projectHub/master/docs/images/ai-fill.png

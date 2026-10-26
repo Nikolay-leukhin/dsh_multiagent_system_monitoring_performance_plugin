@@ -1,0 +1,1131 @@
+
+### dsh/server.js (9)
+0	`/.exec(raw)\n  const body = fenced ? fenced[1] : raw\n  const start = body.indexOf('{')\n  const end = body.lastIndexOf('}')\n  if (start < 0 || end <= start) throw new Error('模型没有返回 JSON 计划')\n  return JSON.parse(body.slice(start, end + 1))\n}\n\n/** 把一批模型输出块拼成纯文本。 */\nexport function assemblyText(assembler) {\n  return assembler.blocks()\n    .filter((block) => block?.type === 'text')\n    .map((block) => block.text)\n    .join('')\n}\n\n/**\n * 调宿主注册的 LLM 解析指令。任何一步不可用都抛错，由调用方退回本地规则。\n */\nasync function askModel(ctx, { instruction, projects, today }) {\n  const get = (service) => (typeof ctx.get === 'function' ? ctx.get(service) : undefined)\n  const llm = get('llm')\n  if (!llm || typeof llm.stream !== 'function') throw new Error('宿主没有提供可用的 llm 服务')\n  const defaults = get('agentDefaultModel')\n  const route = typeof defaults?.currentSelection === 'function' ? defaults.currentSelection() : undefined\n  if (!route?.provider || !route?.model) throw new Error('没有解析到默认模型')\n\n  const { BlockAssembler, createUserMessage } = await import('@deepseek-ai/dsh-llm')\n  const system = [\n    '你是一个项目管理助手，把用户的中文指令翻译成对工作台项目数据的操作计划。',\n    '只输出一个 JSON 对象，不要解释，不要输出代码块以外的内容。',\n    planSchemaDoc(today)\n  ].join('\\n\\n')\n  const userText = [\n    '当前项目快照（JSON，只能引用这里出现过的项目名或 id）：',\n    JSON.stringify(projectSnapshot(projects, today)),\n    '',\n    `
+1	`,\n    methods: ['GET', 'POST'],\n    requestBody: 'buffered',\n    async fetch(request) {\n      try {\n        if (request?.method === 'POST') {\n          return json(await store.write(await readJsonBody(request)))\n        }\n        const { revision, state } = await store.read()\n        return json({ revision, state })\n      } catch (error) {\n        return fail(error, '无法处理项目数据请求。')\n      }\n    }\n  })\n\n  // AI 填充：自然语言 → 变更计划（不落库，落库由客户端确认后走 /state）。\n  ctx.connection.fetch.register({\n    path: `
+2	`,\n    methods: ['GET'],\n    requestBody: 'buffered',\n    async fetch() {\n      try {\n        return json({ plugin: name, ...(await store.meta()) })\n      } catch (error) {\n        return fail(error, '无法读取项目数据。')\n      }\n    }\n  })\n\n  // 一个路径只能注册一条路由，所以读写共用一个路径、按方法分发。\n  ctx.connection.fetch.register({\n    path: `
+3	`json 代码块和前后废话）。 */\nexport function extractJson(text) {\n  const raw = String(text ?? '')\n  const fenced = /`
+4	'请求需要一个 JSON 请求体。'
+5	'请求体不是合法 JSON。'
+6	'请先输入一句指令。'
+7	'无法解析这句话。'
+8	'请求体过大。'
+
+### dsh/store.js (12)
+0	'项目数据文件无法解析，请修复或移走该文件后重试。'
+1	'project-console: 数据目录未配置'
+2	'项目数据已在其他窗口更新，请重新加载后再保存。'
+3	"示例数据是否已经自动生成过"
+4	'项目数据必须是一个对象。'
+5	'项目数据文件格式不正确。'
+6	'项目数据过大，未保存。'
+7	'无法读取项目数据。'
+8	'项目数据文件过大。'
+9	'项目数据写入失败。'
+10	'其他项目'
+11	'进行中'
+
+### package.json (1)
+0	"多项目总控台：按模块总览所有项目的状态、进展、待跟进事项与 DDL 时间风险。"
+
+### README.md (5)
+0	`\npackage.json                npm 与 DSH 插件声明\ncordis.patch.yml            把服务端入口插入插件树，并指定数据目录\ndsh/server.js               服务端入口：/api/project-console/* 接口\ndsh/store.js                项目数据的原子存储与结构收敛\nsrc/client/index.js         客户端入口：注册工作台面板\nsrc/client/panel.js         面板外壳：顶栏、页签、侧栏、抽屉、表单、弹窗\nsrc/client/screens.js       7 个维度的看板视图组件\nsrc/client/charts.js        环形图／堆叠条／直方图／排行条（手写 SVG + CSS）\nsrc/client/ui.js            图标与基础组件（按钮、徽标、进度、弹窗、抽屉、提示）\nsrc/client/styles.js        面板样式（宿主令牌 + 容器查询）\nsrc/client/api.js           客户端访问本工作台接口\nsrc/shared/analysis.js      风险与汇总计算（纯函数）\nsrc/shared/views.js         模块分组、智能视图筛选与搜索（纯函数）\nsrc/shared/insights.js      看板数据层：风险分布／状态列／模块负载／进度分布／负责人负载／日历／时间线／待跟进分桶（纯函数）\nsrc/shared/aiplan.js        AI 计划层：NL→计划校验、项目匹配、日期解析、预览、应用、本地规则兜底（纯函数）\nsrc/shared/query.js         「问一句」的本地问答\nsrc/shared/prompt.js        Agent 提示词与文档草稿\nscripts/build-client.mjs    多文件源码 → 单文件客户端模块\nscripts/check-workbench-package.mjs  包格式校验\nlib/client.js               构建产物（随包分发）\n`
+1	`bash\npnpm install\npnpm build      # 把 src/ 打成单文件客户端模块 lib/client.js\npnpm test       # node:test 单元与集成测试\npnpm check      # 按规范第 3 节校验包格式\npnpm verify     # build + test + check\n`
+2	`bash\npnpm pack                      # 产出 dsh-workbench-project-console-1.0.1.tgz\ndsh plugin --profile web add "$PWD/dsh-workbench-project-console-1.0.1.tgz"\n`
+3	`\n$DSH_HOME/project-console/state.json\n# 本机即：~/Library/Application Support/dsh-desktop/harness/project-console/state.json\n`
+4	"翻译"
+
+### scripts/build-client.mjs (7)
+0	`// 本文件由 scripts/build-client.mjs 从 src/ 生成，请勿直接修改。\nwindow.__ModuleLoader__.load({\n  id: ${JSON.stringify(PACKAGE_NAME)},\n  factory: (require) => {\n    const __factories = Object.create(null)\n    const __cache = Object.create(null)\n    function __require(id) {\n      if (__factories[id] === undefined) return require(id)\n      if (__cache[id] !== undefined) return __cache[id].exports\n      const module = { exports: {} }\n      __cache[id] = module\n      __factories[id](module.exports, module, __require)\n      return module.exports\n    }\n${rendered.join('\\n')}\n    return __require(${JSON.stringify(entryId)})\n  }\n})\n`
+1	`build-client: ${id} 只支持 export function/class/const/let/var 或 export { a, b }：${trimmed}`
+2	`build-client: ${modules.size} 个模块 -> ${OUT}（${Buffer.byteLength(output)} 字节）\\n`
+3	`build-client: ${id} 有一行无法识别的 import：${trimmed}`
+4	`build-client: ${id} 引用了不支持的模块标识 ${spec}`
+5	`build-client: ${absPath} 位于 src/ 之外`
+6	`build-client: 找不到 ${absPath}`
+
+### scripts/check-workbench-package.mjs (60)
+0	`dsh.client.platform 必须是 "web"，实际 ${JSON.stringify(client.platform)}`
+1	`insert 的 name 必须是包名：期望 ${manifest.name}，实际 ${nameMatch[1].trim()}`
+2	`dsh.client.inject 含 dsh-desktop-workbenches（${inject.length} 项）`
+3	`客户端 require 了未在 dsh.client.external 声明的模块：${missing.join('、')}`
+4	'dsh.client.inject 必须包含 "dsh-desktop-workbenches"，否则工作台能力不会先就绪'
+5	`包名 ${manifest.name}@${manifest.version}，共 ${files.length} 个文件`
+6	`main / exports["."] 未指向包内存在的文件：${JSON.stringify(mainEntry)}`
+7	`check-workbench-package: ${root} 不是工作台包（缺少 package.json）`
+8	`version 不是完整 SemVer：${JSON.stringify(manifest.version)}`
+9	`服务端 name 必须等于包名：期望 ${manifest.name}，实际 ${server.name}`
+10	`客户端模块 id 必须等于包名：期望 ${manifest.name}，实际 ${idMatch[1]}`
+11	`声明了 Harness peer：${dshPeers.map(([name, range]) => `
+12	'check-workbench-package: tarball 里没有 package.json'
+13	'建议声明 @deepseek-ai/schemastery（服务端 Config 需要它）'
+14	`服务端 inject = ${JSON.stringify(server.inject)}`
+15	`exports["./client"] 指向的文件不在包里：${clientEntry}`
+16	`check-workbench-package: 找不到 ${tarballPath}`
+17	`).join('、')}；范围必须显式包含预发布分支，否则安装时报 ERESOLVE`
+18	'服务端 Config 必须是 Schemastery schema（不能是普通对象）'
+19	`\\n结论：通过（必须项全部满足，建议项 ${warnings.length} 条）`
+20	`version = ${manifest.version}（完整 SemVer）`
+21	'声明了 dsh.client 就必须导出 exports["./client"]'
+22	`dsh.bundle.patch 指向的文件不在包里：${patchPath}`
+23	'客户端产物没有调用 window.__ModuleLoader__.load'
+24	'  · tarball 模式跳过服务端入口的运行时检查（需要可解析的依赖）'
+25	`files 未包含必需文件：${missing.join('、')}`
+26	'Config 是 Schemastery schema 且校验必填项'
+27	`包里疑似有敏感文件：${suspicious.join('、')}`
+28	`无法导入服务端入口做运行时检查：${server.message}`
+29	`\\n结论：不通过（${failures.length} 项必须项）`
+30	'缺少 dsh.bundle.patch，包不会作为插件层激活'
+31	'insert 行没有写 name（必须是 npm 包名）'
+32	'声明了 @deepseek-ai/schemastery'
+33	'服务端 inject 必须包含 "connection"'
+34	`补丁文件是空的（或只有注释）：${patchPath}`
+35	'缺少 dsh.client 声明，客户端模块不会被加载'
+36	`客户端模块 id = ${manifest.name}`
+37	`服务端 name = ${manifest.name}`
+38	'dsh.client.inject 必须是字符串数组'
+39	'无法从客户端产物里读出 load({ id })'
+40	'exports["."] 必须指向服务端入口'
+41	`建议声明 exports["${key}"]`
+42	`补丁文件存在且非空：${patchPath}`
+43	'insert.name 不能写相对或绝对路径'
+44	`客户端产物存在：${clientEntry}`
+45	'files 覆盖补丁、服务端入口与客户端产物'
+46	'建议设置 "type": "module"'
+47	`工作台包校验：${sourceLabel}`
+48	'package.json 缺少 name'
+49	`服务端入口存在：${mainPath}`
+50	'Config 没有校验 root 必填'
+51	'建议用 files 显式限定打包内容'
+52	'补丁文件里没有 insert 行'
+53	'服务端没有导出 apply'
+54	'服务端导出 apply'
+55	'未发现常见敏感文件'
+56	'\\n必须项未通过：'
+57	"<模块 id>"
+58	'\\n建议项：'
+59	"<裸包名>"
+
+### SELF-TEST.md (5)
+0	`bash\ncd <repo>\npnpm verify                                   # build + 59 个测试 + 包格式校验\npnpm pack                                     # 产出 tarball\nnode scripts/check-workbench-package.mjs --tarball dsh-workbench-project-console-1.0.1.tgz\n\n# 服务端接口探活（需要 Harness 的认证 cookie）\ncurl -s -b <harness cookie> http://127.0.0.1:43129/api/project-console/meta\n`
+1	`截止 2026-10-06 → 2026-10-31；进度 55% → 80%`
+2	`新会话 / 工作台 / 插件 / 工作区 / 设置`
+3	`工作台／插件／工作区／设置／新会话`
+4	`下周五`
+
+### src/client/api.js (4)
+0	'服务端还没加载 AI 解析接口（重启 Harness 后可用）。'
+1	`请求失败（HTTP ${response.status}）`
+2	'服务端没有返回可用的变更计划。'
+3	'服务端返回了无法识别的数据。'
+
+### src/client/charts.js (9)
+0	`${row.label}：${row.segments.map((segment) => `
+1	`${label}：${slices.map((slice) => `
+2	`${bucket.label}：${bucket.count} 个`
+3	`).join('，') || '无数据'}`
+4	`其中 ${row.danger} 个需关注`
+5	`).join('，')}`
+6	'暂无数据'
+7	'分布'
+8	'项目'
+
+### src/client/index.js (4)
+0	'按模块管理全部项目：状态、进度、待跟进与 DDL 风险一屏看完，可问询、可生成汇报文档。'
+1	"左侧嵌入式业务面板"
+2	'项目总控台'
+3	'项目管理'
+
+### src/client/panel.js (153)
+0	`${dashboard.total} 个项目 · ${rail.filter((item) => item.total > 0).length} 个模块 · ${dashboard.attention} 个需关注`
+1	`进度 ${clampProgress({ progress: Number(form.progress) })}%`
+2	`${label}-${project ? project.name : '全部项目'}-${today}.md`
+3	`将删除工作台里的 ${projects.length} 条项目记录（含示例数据）。不会动任何文件或工作区。`
+4	`进展分析-${project ? project.name : '全部项目'}-${today}.md`
+5	'这是给 Agent 的提示词：复制后粘贴到旁边的原生会话发送，Agent 会基于这些登记数据做分析。'
+6	'用一句话说明要做什么，AI 会判断是新增、修改、删除还是查询；增删改都要你确认后才会写入。'
+7	`${label} · ${project ? project.name : '全部项目'}`
+8	`待跟进 · 未完成 ${open.length} / 共 ${todos.length}`
+9	`首次进入，已生成 ${sampleSummary(samples)}；可随时删除或清空`
+10	`（${String(state.reason).slice(0, 60)}）`
+11	`已生成 ${sampleSummary(samples)}，可随时删除或清空`
+12	`${scopeLabel} · ${selection.length} 个`
+13	`${entry.name} · ${entry.total} 个项目`
+14	'给内部分享《线上问题定位实战》准备加一条待跟进：周五前做一次预讲'
+15	'例如：把订单结算服务重构的 DDL 改到下周五，进度调到 80%'
+16	'把订单结算服务重构的 DDL 改到下周五，进度调到 80%'
+17	`AI 填充已执行：${planSummary(plan)}`
+18	`AI 填充已执行：${aiApplied.summary}`
+19	'删除只影响本工作台里的这条记录，不会动任何文件或工作区。'
+20	`删除「${confirmDelete.name}」？`
+21	`进展分析提示词 · ${project.name}`
+22	`进展记录 · ${updates.length}`
+23	`已下载 ${aiOutput.filename}`
+24	'新增项目：服务网格试点，放到公司项目，截止月底'
+25	`确认执行 ${changeCount} 项变更`
+26	'试试换个模块、清掉智能视图，或者改一下搜索词。'
+27	'数据存于 DSH 数据目录，卸载工作台不会删除'
+28	'以上变更会在你点「确认执行」后一次性写入。'
+29	'今天推进了什么 / 卡在哪 / 决定了什么'
+30	`搜索「${keyword.trim()}」`
+31	`已保存 · 修订 ${revision}`
+32	'问一句：哪些项目这周到期？有什么风险？'
+33	`标记完成：${todo.title}`
+34	`截止 ${todo.dueDate}`
+35	'需求文档 / 仓库 / 看板地址'
+36	'已复制，粘贴到旁边的会话发送即可'
+37	'搜索项目、负责人、标签或待跟进…'
+38	`生成${doc.label}`
+39	'进展分析提示词 · 全部项目'
+40	'生成后复制到旁边的会话发送'
+41	'已撤销上一次 AI 填充'
+42	'复制失败，请手动全选复制'
+43	'例如：订单结算服务重构'
+44	'用自然语言增删改查项目'
+45	"第一次进入且文档为空"
+46	'在本机数据上直接回答'
+47	'可直接输入新的模块名'
+48	'删掉副业小程序原型'
+49	'读取项目数据失败。'
+50	'分析这个项目的进展'
+51	'项目名称不能为空。'
+52	'截止日期（DDL）'
+53	'这个项目要交付什么'
+54	'没有符合条件的项目'
+55	'按模块生成示例项目'
+56	'这周要交付什么？'
+57	'还没有进展记录。'
+58	'没有待跟进事项。'
+59	'AI 填充指令'
+60	'新增待跟进事项'
+61	'待跟进截止日期'
+62	'用、或逗号分隔'
+63	'模块与智能视图'
+64	'清空全部项目？'
+65	'已清空全部项目'
+66	'询问项目情况'
+67	'本地规则解析'
+68	'新增进展记录'
+69	'项目名称 *'
+70	'下载 .md'
+71	'操作失败。'
+72	'保存失败。'
+73	'解析失败。'
+74	'AI 填充'
+75	'AI 助手'
+76	'我 / 谁'
+77	'后端、财务'
+78	'一句话说明'
+79	'项目总控台'
+80	'已创建项目'
+81	'已保存修改'
+82	'已删除项目'
+83	'模块看板'
+84	'状态看板'
+85	'其他项目'
+86	'模型解析'
+87	'解析中…'
+88	'解析结果'
+89	'最近更新'
+90	'时间风险'
+91	'记录类型'
+92	'删除事项'
+93	'编辑项目'
+94	'删除项目'
+95	'新建项目'
+96	'保存修改'
+97	'创建项目'
+98	'项目名称'
+99	'所属模块'
+100	'开始日期'
+101	'截止日期'
+102	'相关链接'
+103	'筛选结果'
+104	'全部项目'
+105	'搜索项目'
+106	'刷新数据'
+107	'看板维度'
+108	'智能视图'
+109	'保存中…'
+110	'读取失败'
+111	'示例数据'
+112	'重新加载'
+113	'下载失败'
+114	'确认清空'
+115	'确认删除'
+116	'时间线'
+117	'待跟进'
+118	'进行中'
+119	'问一句'
+120	'负责人'
+121	'未指定'
+122	'未排期'
+123	'记录'
+124	'进展'
+125	'阻塞'
+126	'决策'
+127	'概览'
+128	'列表'
+129	'日历'
+130	'提问'
+131	'取消'
+132	'关闭'
+133	'解析'
+134	'模块'
+135	'状态'
+136	'进度'
+137	'开始'
+138	'未填'
+139	'截止'
+140	'剩余'
+141	'说明'
+142	'追加'
+143	'添加'
+144	'标签'
+145	'全部'
+146	'文档'
+147	'清空'
+148	'重试'
+149	'撤销'
+150	'复制'
+151	'收起'
+152	'、'
+
+### src/client/screens.js (80)
+0	`${kpis.attention} 个需关注 · ${kpis.overdue} 个逾期 · ${kpis.danger} 个危险 · 本周到期 ${kpis.weekDue} 个`
+1	`pc-accent-dot pc-accent-${accentOf(accents, item.project.module || '其他项目')}`
+2	`pc-accent-dot pc-accent-${accentOf(accents, row.project.module || '其他项目')}`
+3	`pc-accent-dot pc-accent-${accentOf(accents, project.module || '其他项目')}`
+4	`${row.project.name}｜${row.startIso} → ${row.endIso}｜${row.risk.label}`
+5	`本月 ${model.monthItems} 个节点 · ${model.daysWithItems} 天有安排`
+6	`${model.from} → ${model.to}（${model.totalDays} 天）`
+7	`${group.stats.danger + group.stats.watch} 个需关注`
+8	`${row.total} 个 · 平均 ${row.avgProgress}%`
+9	`逾期 ${kpis.overdue} · 阻塞 ${kpis.blocked}`
+10	`平均进度 ${group.stats.avgProgress}%`
+11	`${project.name}｜${risk.label}`
+12	`待跟进 ${group.stats.openTodos}`
+13	`${item.label}：${item.title}`
+14	`${selected.items.length} 项`
+15	`${column.stats.danger} 危险`
+16	'给项目填上开始与截止日期，就能在这里看到时间线。'
+17	`逾期 ${item.overdueDays} 天`
+18	`${kpis.todoOverdue} 项已逾期`
+19	`${group.stats.total} 个`
+20	`${attention.length} 个`
+21	`${row.openTodos} 待跟进`
+22	'这一天没有 DDL，也没有待跟进事项。'
+23	`${kpis.active} 个进行中`
+24	`${dueSoon.length} 个`
+25	`已完成 ${kpis.done} 个`
+26	`完成：${item.title}`
+27	'还没有项目，先登记几个再来看板。'
+28	'跨度较长，只显示前 210 天'
+29	'当前没有需要升级处理的项目。'
+30	`今天 ${today}`
+31	'当前筛选下没有项目。'
+32	'本周没有到期的项目。'
+33	'所有事项都完成了。'
+34	'没有可展示的项目'
+35	'没有可排期的项目'
+36	'待跟进清单是空的'
+37	'还没填 DDL'
+38	'当天没有安排'
+39	'暂无逾期事项'
+40	'今天该盯什么'
+41	'需要马上处理'
+42	'本周日之前'
+43	'还没有项目'
+44	'负责人负载'
+45	'其他项目'
+46	'待跟进 '
+47	'节奏正常'
+48	'项目总数'
+49	'本周到期'
+50	'平均进度'
+51	'风险分布'
+52	'模块负载'
+53	'进度分布'
+54	'进度 '
+55	'待跟进'
+56	'进行中'
+57	'未排期'
+58	'上个月'
+59	'下个月'
+60	'需关注'
+61	'项目'
+62	'模块'
+63	'状态'
+64	'进度'
+65	'截止'
+66	'剩余'
+67	'风险'
+68	'今天'
+69	'完成'
+70	'危险'
+71	'关注'
+72	'正常'
+73	'日'
+74	'一'
+75	'二'
+76	'三'
+77	'四'
+78	'五'
+79	'六'
+
+### src/client/ui.js (4)
+0	`进度 ${percent}%`
+1	'关闭详情'
+2	'清空搜索'
+3	'关闭'
+
+### src/shared/aiplan.js (85)
+0	'- 新增项目：{ "op":"add", "name":"项目名", "module":"公司项目|日常工作|其他项目", "status":"进行中|待启动|阻塞|暂停|已完成", "owner":"", "startedOn":"YYYY-MM-DD", "dueDate":"YYYY-MM-DD", "progress":0, "summary":"一句话", "tags":["标签"] }'
+1	`${found.reason}，${op === 'delete' ? '删除' : op === 'addTodo' ? '新增待跟进' : op === 'doneTodo' ? '完成待跟进' : '追加进展'}已跳过`
+2	'- 追加进展：{ "op":"addLog", "target":"项目名或 id", "kind":"note|progress|blocker|decision", "text":"内容" }'
+3	'- 新增待跟进：{ "op":"addTodo", "target":"项目名或 id", "title":"事项", "dueDate":"YYYY-MM-DD", "owner":"" }'
+4	'JSON 结构：{ "intent": "add|update|delete|todo|log|query", "reply": "给用户看的一句话", "actions": [...] }'
+5	`「${raw}」匹配到多个项目（${partial.slice(0, 3).map((p) => p.name).join('、')}），请说全一点`
+6	'没看懂这句话。可以说「新增一个项目叫 X」「把 X 的 DDL 改到下周五」「删掉 X」「给 X 加一条待跟进：Y」，或者直接问「这周要交付什么」。'
+7	'- 修改项目：{ "op":"update", "target":"项目名或 id", "changes":{ 只写要改的字段，字段名同上 } }'
+8	`给「${action.name}」追加${KIND_LABELS[action.kind] ?? '记录'}：${action.text}`
+9	'规则：只能引用上面给出的真实项目名或 id；只问不做时 intent 用 "query"、actions 留空、reply 给答案；'
+10	'- 完成待跟进：{ "op":"doneTodo", "target":"项目名或 id", "title":"事项关键词" }'
+11	`今天是 ${today}。把用户的指令翻译成一个 JSON 对象，不要输出任何解释或 Markdown 代码块之外的文字。`
+12	`「${project.name}」（${bits.join(' · ')}）${project.summary ? `
+13	`给「${action.name}」新增：${action.title}${action.dueDate ? `
+14	`「${target.name}」有 ${open.length} 条未完成待跟进，请说清是哪一条`
+15	'- 删除项目：{ "op":"delete", "target":"项目名或 id" }'
+16	'日期一律换成 YYYY-MM-DD；不确定的字段不要编造，宁可少写一个 action。'
+17	`把「${action.name}」的「${action.title}」标记完成`
+18	`「${action.name}」：${changes.join('；')}`
+19	`没有识别出「${found.project.name}」要改什么，已跳过`
+20	'先说一句要做什么，比如「把订单结算服务重构的 DDL 改到下周五」。'
+21	`在「${project.name}」里找不到要完成的待跟进，已跳过`
+22	`状态「${source[key]}」不在可选范围，已忽略`
+23	`「${action.name}」${project ? `
+24	`日期「${source[key]}」无法识别，已忽略`
+25	`把「${target.name}」的待跟进标记完成`
+26	`「${target.name}」没有未完成的待跟进`
+27	`有 ${dropped} 项因为项目已变化被跳过`
+28	`修改 ${count('update')} 个`
+29	`删除 ${count('delete')} 个`
+30	`进展 ${count('addLog')} 条`
+31	`给「${target.name}」加一条待跟进`
+32	`给「${target.name}」追加一条记录`
+33	`${found.reason}，修改已跳过`
+34	'没听出是哪个项目的待跟进，请把项目名说清楚'
+35	`「${raw}」对应多个项目，请说全一点`
+36	`新增 ${count('add')} 个`
+37	'没听出要删哪个项目，请把项目名说清楚'
+38	`删除「${target.name}」`
+39	`修改「${target.name}」`
+40	'actions 里每一项是下列之一：'
+41	'《》()（）\\[\\]【】]/g, '
+42	`不认识的动作「${op}」，已跳过`
+43	'没听出是哪个项目，请把项目名说清楚'
+44	'新增动作缺少项目名称，已跳过'
+45	`待跟进 ${todos} 项`
+46	`找不到项目「${raw}」`
+47	`新增项目「${name}」`
+48	`进度值无法识别，已忽略`
+49	'待跟进缺少内容，已跳过'
+50	'模型没有返回可用的计划'
+51	'进展内容为空，已跳过'
+52	'没有指明是哪个项目'
+53	'没说清待跟进的内容'
+54	'没说清要记什么'
+55	'没听出项目名称'
+56	"变更计划"
+57	'其他项目'
+58	'新增项目'
+59	'修改项目'
+60	'删除项目'
+61	'进展记录'
+62	'没有变更'
+63	'负责人'
+64	'进行中'
+65	'未排期'
+66	'待跟进'
+67	'已完成'
+68	'待启动'
+69	'名称'
+70	'模块'
+71	'状态'
+72	'截止'
+73	'开始'
+74	'进度'
+75	'说明'
+76	'链接'
+77	'记录'
+78	'进展'
+79	'阻塞'
+80	'决策'
+81	'暂停'
+82	'下'
+83	'空'
+84	'，'
+
+### src/shared/analysis.js (26)
+0	`时间已过 ${percent}% 但进度只有 ${clampProgress(project)}%`
+1	`已超过截止日期 ${Math.abs(left)} 天`
+2	`已逾期 ${Math.abs(left)} 天`
+3	`还剩 ${left} 天，节奏正常`
+4	`还剩 ${left} 天`
+5	`只剩 ${left} 天`
+6	'处于阻塞状态，需要推动'
+7	'未设置截止日期'
+8	'公司项目'
+9	'日常工作'
+10	'其他项目'
+11	'进度风险'
+12	'今天到期'
+13	'明天到期'
+14	'进行中'
+15	'待启动'
+16	'已完成'
+17	'已逾期'
+18	'未排期'
+19	'已交付'
+20	'阻塞'
+21	'暂停'
+22	'紧急'
+23	'临近'
+24	'正常'
+25	'全部'
+
+### src/shared/insights.js (15)
+0	`${data.total} 个项目里 ${data.overdue} 个已逾期、${data.danger} 个需要马上处理，先看「需关注」这一列。`
+1	`${data.total} 个项目整体在跑，${data.attention} 个需要盯一下，本周到期 ${data.weekDue} 个。`
+2	`${data.total} 个项目节奏正常，平均进度 ${data.avgProgress}%，没有逾期项。`
+3	`${match[1]} 年 ${Number(match[2])} 月`
+4	'还没有项目，先登记几个再来看板。'
+5	'其他项目'
+6	'今天到期'
+7	'进行中'
+8	'未指定'
+9	'待跟进'
+10	'已逾期'
+11	'本周内'
+12	'未排期'
+13	"维度"
+14	'更晚'
+
+### src/shared/prompt.js (77)
+0	`| ${item.project.name} | ${item.project.module || '其他项目'} | ${item.project.status || '进行中'} | ${clampProgress(item.project)}% | ${item.project.dueDate || '未排期'} | ${risk.label} — ${risk.detail} | ${todo.length} |`
+1	`- 起止：${project?.startedOn || '未填'} → ${project?.dueDate || '未排期'}（${formatRemaining(project?.dueDate, today)}）`
+2	`- ${item.module}：${item.total} 个（进行中 ${item.active}、危险 ${item.danger}、待跟进 ${item.openTodos}）`
+3	`- 下一步：${openTodos(item.project).map((todo) => todo.title).slice(0, 3).join('；') || '待补充'}`
+4	`| ${item.name}：${todo.title} | ${todo.owner || '待定'} | ${todo.dueDate || '待定'} | 未开始 |`
+5	`- 进度：${clampProgress(item.project)}%，${formatRemaining(item.project.dueDate, today)}`
+6	`${String(item.at).slice(0, 10)} [${KIND_LABELS[item.kind] ?? '记录'}] ${item.text}`
+7	`已生成「${DOC_KINDS[kind] ?? '文档'}」草稿：可以直接复制到旁边的会话里让 Agent 补全，也可以下载成 Markdown。`
+8	`- 模块／状态：${item.project.module || '其他项目'}／${item.project.status || '进行中'}`
+9	`- 状态分布：${Object.entries(data.byStatus).map(([key, value]) => `
+10	`- 风险分布：${Object.entries(data.byRisk).map(([key, value]) => `
+11	`${item.project.name}：${item.risk.detail}，建议先确认责任人并给出新的交付时间。`
+12	`请基于${scope}的登记数据做一次进展分析，不要编造数据里没有的事实；信息不足时明确说「数据不足」。`
+13	`- 时间风险：${item.risk.label} — ${item.risk.detail}`
+14	'4. 下一步动作：给我 3-5 条具体、可执行的动作，每条写明针对哪个项目、建议完成时间。'
+15	`${item.name}：${todo.title}${todo.dueDate ? `
+16	'2. 时间风险：逐个说明剩余时间与进度的匹配情况，标出最可能来不及的项目和判断依据。'
+17	`${item.project.name}：${item.risk.detail}`
+18	`- 时间风险：${risk.label} — ${risk.detail}`
+19	'| 项目 | 模块 | 状态 | 进度 | 截止 | 风险 | 待跟进 |'
+20	`**进展记录（新→旧，共 ${updates.length} 条）**`
+21	`- 模块：${project?.module || '其他项目'}`
+22	`**已完成待跟进（${doneTodos.length} 项）**`
+23	`- 状态：${project?.status || '进行中'}`
+24	`- 负责人：${project?.owner || '未指定'}`
+25	'1. 当前状态判断：哪些在正轨、哪些已经偏了，用一两句话给结论。'
+26	`### ${project?.name ?? '未命名项目'}`
+27	`- 进度：${clampProgress(project)}%`
+28	`- 标签：${project.tags.join('、')}`
+29	`**未完成待跟进（${todos.length} 项）**`
+30	'3. 阻塞与依赖：从进展记录里找出被人或外部条件卡住的点。'
+31	'5. 需要我补充的信息：列出你判断时需要但我没登记的内容。'
+32	`# 项目状态汇报 · ${title}（${today}）`
+33	'| （暂无项目） |  |  |  |  |  |  |'
+34	`# 会议纪要 · ${title}（${today}）`
+35	`- 一句话说明：${project.summary}`
+36	`你是我的项目推进助理。今天是 ${today}。`
+37	'| 事项 | 负责人 | 截止 | 状态 |'
+38	`# 周报 · 项目推进（${today}）`
+39	`- 链接：${project.link}`
+40	`- 项目总数：${data.total}`
+41	`).join('、') || '无'}`
+42	'| （待补充） |  |  |  |'
+43	`- 最近进展：${latest ? `
+44	`# 风险清单 · ${title}`
+45	'（待跟进清单为空，请补充下周计划）'
+46	'（当前没有需要升级处理的风险）'
+47	`生成时间：${today}`
+48	'（工作台里还没有项目）'
+49	'## 二、讨论与结论'
+50	'请按这个结构输出：'
+51	'## 一、整体情况'
+52	'## 二、本周进展'
+53	'## 三、下周计划'
+54	'## 四、需要协调'
+55	'## 一、项目现状'
+56	` : '无记录'}`
+57	'## 三、行动项'
+58	'下面这一个项目'
+59	'## 处理建议'
+60	'- （待补充）'
+61	'## 项目明细'
+62	'- 按模块：'
+63	'下面这些项目'
+64	'项目状态汇报'
+65	'会议纪要骨架'
+66	'（暂无项目）'
+67	'参加会议：'
+68	'## 概要'
+69	'（暂无）'
+70	'风险清单'
+71	'全部项目'
+72	'记录'
+73	'进展'
+74	'阻塞'
+75	'决策'
+76	'周报'
+
+### src/shared/query.js (40)
+0	`· ${project.name}（${project.module || '其他项目'}｜${project.status || '进行中'}｜${formatRemaining(project.dueDate, risk.today)}）${risk.detail ? `
+1	`\\n需关注 ${data.attention.filter((item) => RISKY.includes(item.risk.level)).length} 个，逾期 ${data.byRisk.overdue ?? 0} 个。`
+2	`${header('阻塞的项目', blocked.length)}\\n${blocked.map((project) => projectLine(project, today).text).join('\\n')}`
+3	`状态：${project.status || '进行中'}｜进度：${clampProgress(project)}%｜${formatRemaining(project.dueDate, today)}`
+4	`· ${item.module}：${item.total} 个｜进行中 ${item.active}｜危险 ${item.danger}｜待跟进 ${item.openTodos}`
+5	`\\n最优先：\\n${danger.map((item) => line(item.project, { ...item.risk, today })).join('\\n')}`
+6	`待跟进 ${todos.length} 项：${todos.slice(0, 5).map((todo) => todo.title).join('、')}`
+7	`· [${todo.done ? 'x' : ' '}] ${todo.title}｜${project.name}${todo.dueDate ? `
+8	`共 ${data.total} 个项目：${Object.entries(data.byStatus).map(([key, value]) => `
+9	`没看懂「${raw}」，先给你当前最需要关注的项目。也可以直接说项目名，或问：本周到期、逾期、待跟进、阻塞、概览。\\n${risk.text}`
+10	`最近进展（${String(latest.at).slice(0, 10)}）：${latest.text}`
+11	`${project.name}（${project.module || '其他项目'}）`
+12	`${header('需要关注的项目', risky.length)}\\n${body}`
+13	`${header('待跟进事项', items.length)}\\n${body}`
+14	`风险：${risk.label} — ${risk.detail}`
+15	'当前没有需要重点关注的项目，所有项目的 DDL 和进度都正常。'
+16	'问一句比如：哪些项目这周到期？有什么风险？我的待跟进还有哪些？'
+17	'工作台里还没有项目。点右上角「新建项目」开始登记。'
+18	'工作台里还没有项目，先登记几个项目我再帮你盯。'
+19	`\\n按模块：\\n${moduleLines}`
+20	`说明：${project.summary}`
+21	`${title}（${count} 个）`
+22	`负责人：${project.owner}`
+23	`${title}：没有符合条件的项目。`
+24	`${label}：没有到期的项目。`
+25	`本周（到 ${end}）到期的项目`
+26	`${month} 内到期的项目`
+27	`).join('、')}`
+28	'没有处于阻塞状态的项目。'
+29	'没有未完成的待跟进事项'
+30	'我的待跟进还有哪些？'
+31	'待跟进清单是空的。'
+32	'哪些项目这周到期？'
+33	'整体情况怎么样？'
+34	'还没有进展记录'
+35	'今天到期的项目'
+36	'明天到期的项目'
+37	'已逾期的项目'
+38	'有什么风险？'
+39	'阻塞'
+
+### src/shared/sample.js (84)
+0	'下周四内部分享，用三个真实 case 讲排查思路：从火焰图到链路日志。'
+1	`${projects.length} 个示例项目（${detail}）`
+2	'把结算逻辑从单体拆成独立服务，接口按领域重划，历史数据要能对得上。'
+3	'向主管汇报本季度技术产出：稳定性、性能、效率三块指标与下季规划。'
+4	'自己写个小工具盯接口 P99 与慢 SQL，异常时推到企业微信。'
+5	'首屏从 1.8s 压到 1s 以内：拆包、图片按需、接口并行。'
+6	'本周告警值班：处理 P2 告警、写复盘、把结论沉淀进值班手册。'
+7	'把几个高危依赖升到安全版本，顺手删掉两次迭代前留下的兼容代码。'
+8	'维护自己那个小开源库：回 issue、审 PR、发一个小版本。'
+9	'先按主题分了 6 类：并发、存储、网络、JVM、框架源码、排查'
+10	'把订单库的增量变更实时打进数据中台，先跑通订单域的一张宽表。'
+11	'先用两周做个能跑通的最小闭环，验证一下这个想法值不值得继续。'
+12	'大纲和两个 case 定了，还差一个内存泄漏的分析过程'
+13	'扫出 3 个高危依赖和 1 处废弃兼容层，升级分支已建'
+14	'把散在各处的排查笔记和源码阅读记录整理成可检索的博客。'
+15	'稳定性与性能两块指标已收集完，等效率部分的埋点数据'
+16	'两次 P2 告警的复盘初稿写完，等负责人确认根因'
+17	'旧系统遗留的优惠券口径没确认，验收用例写不下去'
+18	'按用户维度灰度的发布平台，已接入全部核心服务。'
+19	'等运维开采集端的只读权限，本地只能用假数据跑'
+20	'订单域字段映射表确认，CDC 链路本地跑通'
+21	'首屏耗时采样完成，定位到主包过大和串行请求'
+22	'联调订单域增量同步，核对 24 小时延迟'
+23	'回复剩下的 6 个 issue 并打标签'
+24	'全量发布完成，回滚预案与值班流程已归档'
+25	'对着同事预讲一遍，控制在 40 分钟'
+26	'开源项目 issue 与 PR 维护'
+27	`${name} ${count} 个`
+28	'结算链路拆出独立服务，主干联调通过'
+29	'补第三个 case 的火焰图与结论'
+30	'把复盘结论同步进值班手册和监控规则'
+31	'拆首屏 JS 分包，砍掉未用依赖'
+32	'内部分享《线上问题定位实战》准备'
+33	'合并了两个社区 PR，CI 全绿'
+34	'整理「分布式事务」一节并画流程图'
+35	'补性能优化前后的对比数据与图表'
+36	'和财务确认历史订单的结算口径'
+37	'确认采集端权限范围与账号'
+38	'写一页验证目标与技术选型'
+39	'补齐结算接口的契约测试'
+40	'线上告警值班与故障复盘'
+41	'依赖升级与技术债清理'
+42	'数据中台订单域接入'
+43	'移动端首屏性能优化'
+44	'Q3 技术季度汇报'
+45	'升级并跑通全量回归'
+46	'自研服务监控小工具'
+47	'技术笔记与博客整理'
+48	'订单结算服务重构'
+49	'灰度发布平台上线'
+50	'副业小程序原型'
+51	'公司项目'
+52	'日常工作'
+53	'技术分享'
+54	'其他项目'
+55	'进行中'
+56	'已完成'
+57	'可观测'
+58	'稳定性'
+59	'技术债'
+60	'待启动'
+61	"今天"
+62	`示例`
+63	'示例'
+64	'后端'
+65	'重构'
+66	'数据'
+67	'前端'
+68	'性能'
+69	'平台'
+70	'汇报'
+71	'值班'
+72	'依赖'
+73	'阻塞'
+74	'工具'
+75	'运维'
+76	'开源'
+77	'社区'
+78	'学习'
+79	'写作'
+80	'副业'
+81	'原型'
+82	'我'
+83	'、'
+
+### src/shared/views.js (13)
+0	'逾期、阻塞、紧急或进度落后的项目'
+1	'还有未完成的待跟进事项'
+2	'已超过截止日期'
+3	'本周日之前到期'
+4	'已交付的项目'
+5	'本周到期'
+6	'有待跟进'
+7	'其他项目'
+8	'需关注'
+9	'已逾期'
+10	'已完成'
+11	'进行中'
+12	'全部'
+
+### test/aiplan.test.js (62)
+0	'planSchemaDoc 与 projectSnapshot 给模型的上下文是稳定的'
+1	'normalizePlan 从动作推断 intent，并原样接受 query'
+2	'新增 1 个，修改 1 个，删除 1 个，待跟进 1 项，进展 1 条'
+3	'planFromRules 能识别查询、新增、修改、删除、待跟进与记录'
+4	'planFromRules 匹配不到项目时给出可读提示而不是乱改'
+5	'normalizePlan 还能处理待跟进、完成与进展三种动作'
+6	'把订单结算服务重构的 DDL 改到下周五，进度调整到 80%'
+7	'matchProject 支持 id、全名、包含与歧义检测'
+8	'normalizePlan 丢弃无法匹配的项目并记录原因'
+9	'normalizePlan 校验新增项目、状态与日期'
+10	'给订单结算服务重构加一条待跟进：写压测报告，明天截止'
+11	'resolveDate 解析绝对日期与常见相对说法'
+12	'previewPlan 生成分组的人类可读预览'
+13	'applyPlan 对未知项目与空计划是安全的'
+14	'applyPlan 一次把增删改查全部落到位'
+15	'新增一个项目：自研监控小工具，放到其他项目'
+16	'normalizePlan 处理非法输入'
+17	'导出常量覆盖六种意图与六种动作'
+18	'把那个啥的 DDL 改到月底'
+19	'加 1 删 1，总数不变'
+20	'把结算逻辑拆成独立服务'
+21	'进度被夹到 0-100'
+22	'删掉数据中台订单域接入'
+23	'非法状态回落到默认值'
+24	'本周没有到期的项目。'
+25	'数据中台订单域接入'
+26	'Q3 技术季度汇报'
+27	'和主管对了一次口径'
+28	'订单结算服务重构'
+29	'压根不存在的项目'
+30	'这周要交付什么？'
+31	'自研监控小工具'
+32	'原状态不被修改'
+33	'补齐契约测试'
+34	'不存在的项目'
+35	'指标收集完成'
+36	'11月3号'
+37	'写压测报告'
+38	'公司项目'
+39	'日常工作'
+40	'随便写的'
+41	'订单结算'
+42	'订单导出'
+43	'其他项目'
+44	'契约测试'
+45	'进行中'
+46	'下周五'
+47	'本周五'
+48	'+3天'
+49	'改一下'
+50	'新项目'
+51	'一句话'
+52	'后端'
+53	'今天'
+54	'明天'
+55	'后天'
+56	'月底'
+57	'订单'
+58	'瞎写'
+59	'工具'
+60	'阻塞'
+61	'我'
+
+### test/analysis.test.js (31)
+0	'projectRisk 的每个等级都带 label / tone / rank / detail'
+1	'daysLeft / formatRemaining 覆盖逾期、当天、明天与未来'
+2	'moduleRollup 与 moduleNames 覆盖固定模块和自定义模块'
+3	'clampProgress 与 openTodos 处理脏数据'
+4	`期望 ${level}，实际 ${risk.level}`
+5	'sortByRisk 把危险项目排在最前，同级按剩余天数'
+6	'projectRisk 能识别时间已过但进度落后的项目'
+7	'overview 汇总状态、风险、待跟进与需关注清单'
+8	'projectRisk 按优先级判定风险等级'
+9	'overview 在空列表下不抛错'
+10	'todayISO 使用本地日历日'
+11	'已逾期 3 天'
+12	'还剩 10 天'
+13	'公司项目'
+14	'今天到期'
+15	'明天到期'
+16	'日常工作'
+17	'副业试验'
+18	'其他项目'
+19	'项目一'
+20	'进行中'
+21	'未排期'
+22	'已完成'
+23	'紧急后'
+24	'紧急前'
+25	'找设计'
+26	'阻塞'
+27	'正常'
+28	'逾期'
+29	'全部'
+30	'我'
+
+### test/client-bundle.test.js (41)
+0	'构建产物必须调用 window.__ModuleLoader__.load'
+1	'注册描述符：左侧嵌入式面板、标题、GitHub 仓库、布局边界'
+2	'register 的返回值必须交给 ctx.effect 管理'
+3	'构建产物用本包名注册，且只 require 共享基线'
+4	'注册的面板是接数据的 ProjectConsole'
+5	'新包不填写旧的 register({ id })'
+6	'没有项目时：页签、模块导航、KPI 与问一句都在'
+7	`构建产物引用了基线之外的模块：${spec}`
+8	'有数据时：概览渲染 KPI 与四个维度的图表'
+9	'侧栏按模块与会话维度给出计数，并带模块强调色'
+10	'插件导出 apply 与 inject'
+11	'产物里不应残留 ESM import'
+12	'产物里不应残留 ESM export'
+13	'左侧嵌入式面板需要 embedded'
+14	'读取失败时渲染错误提示与重试动作'
+15	`缺少页签：${label}`
+16	'加载中渲染骨架屏而不是空白'
+17	'无法读取项目数据。'
+18	'接口联调完成'
+19	'补齐验收用例'
+20	'结算系统二期'
+21	'客户拜访材料'
+22	'项目总控台'
+23	'还没有项目'
+24	'结算系统'
+25	'公司项目'
+26	'官网改版'
+27	'日常工作'
+28	'其他项目'
+29	'内训课件'
+30	'模块看板'
+31	'状态看板'
+32	'进行中'
+33	'已完成'
+34	'时间线'
+35	'待跟进'
+36	'阻塞'
+37	'概览'
+38	'列表'
+39	'日历'
+40	'我'
+
+### test/insights.test.js (49)
+0	'progressBuckets 覆盖 0 到 100 且总数守恒'
+1	'calendarMonth 把 DDL 与待跟进放到正确的日期格'
+2	'ownerWorkload 按人聚合，未填负责人归到「未指定」'
+3	'moduleAccentMap 给每个模块固定颜色，顺序稳定'
+4	'calendarMonth 生成 6 周网格并标出今天与当月'
+5	'statusColumns 用固定状态顺序，列内按风险排序'
+6	'shiftMonth / monthLabel 跨年正确'
+7	'timelineModel 给出每行的起止位置与今天标记'
+8	'riskBreakdown 按风险从高到低且百分比合理'
+9	'moduleWorkload 给出每个模块的构成与占比'
+10	`周数异常：${model.weeks.length}`
+11	'calendarMonth 对空数据与无日期项目安全'
+12	'timelineModel 对空数据与超长跨度都安全'
+13	'statusTone 覆盖固定状态并给未知状态兜底'
+14	'followUpBuckets 按紧迫度分桶并排序'
+15	'headline 随数据变化给出不同结论'
+16	'官网改版 10-09 在本周内'
+17	'kpis 一次算清各维度数字'
+18	'按截止日期排序，未排期排最后'
+19	'首周应包含上月补齐的日期'
+20	'同样输入应得到同样映射'
+21	'2026 年 10 月'
+22	'10-09 在本周内'
+23	'10 月 31 天'
+24	'逾期的待跟进要标红'
+25	`事项 ${id}`
+26	'同一格内不应重复'
+27	'条不能超出右边界'
+28	'10-20 更晚'
+29	'事项 t2'
+30	'结算系统'
+31	'公司项目'
+32	'官网改版'
+33	'日常工作'
+34	'其他项目'
+35	'内训课件'
+36	'无期项目'
+37	'落后项目'
+38	'进行中'
+39	'小程序'
+40	'已完成'
+41	'待启动'
+42	'未指定'
+43	'小李'
+44	'阻塞'
+45	'随便'
+46	'暂停'
+47	'坏值'
+48	'我'
+
+### test/prompt.test.js (23)
+0	'docKinds 暴露四类文档，deliveryHint 给出交付说明'
+1	'buildAnalysisPrompt 带上日期、范围与输出结构'
+2	'projectBrief 输出关键字段、进展与待跟进'
+3	'portfolioBrief 按风险排序拼接多个项目'
+4	'buildDocDraft 生成四类文档草稿'
+5	'projectBrief 对空项目也不抛错'
+6	'单项目文档草稿只包含该项目'
+7	'把结算流程搬到线上'
+8	'等财务确认口径'
+9	'完成对账接口'
+10	'写验收用例'
+11	'结算系统'
+12	'公司项目'
+13	'联调支付'
+14	'正常项目'
+15	'逾期项目'
+16	'别的项目'
+17	'进行中'
+18	'空项目'
+19	'单项目'
+20	'后端'
+21	'财务'
+22	'我'
+
+### test/query.test.js (34)
+0	'无法识别的问题回退到需关注清单并给出问法提示'
+1	'待跟进问句列出未完成事项并可按逾期过滤'
+2	`${example} 的回答过短`
+3	'风险类问句只列出需要关注的项目'
+4	'已完成项目不应出现在风险清单里'
+5	'空问题与空数据都有可读的回答'
+6	'时间窗口问句按 DDL 过滤'
+7	'示例问句都能得到非空回答'
+8	'概览类问句给出整体分布'
+9	'提到项目名时聚焦该项目'
+10	'我的待跟进还有哪些？'
+11	'小程序现在什么情况？'
+12	'哪些项目本周到期？'
+13	'逾期的待跟进有哪些'
+14	'整体情况怎么样？'
+15	'这个月要交付什么'
+16	'今天到期的项目'
+17	'哪些已经逾期了'
+18	'帮我看下那个啥'
+19	'客户结算系统'
+20	'有什么风险？'
+21	'有什么风险'
+22	'公司项目'
+23	'结算系统'
+24	'官网改版'
+25	'日常工作'
+26	'其他项目'
+27	'内训课件'
+28	'进行中'
+29	'小程序'
+30	'已完成'
+31	'对账'
+32	'阻塞'
+33	'我'
+
+### test/sample.test.js (37)
+0	`示例项目数量偏少：${projects.length}`
+1	`${module} 只有 ${count} 个示例`
+2	'示例数据在给定日期上是相对生成的，换一天也成立'
+3	'sampleSummary 说明数量与模块分布'
+4	`示例内容里应出现研发词汇：${needle}`
+5	'示例数据覆盖各种风险等级，第一眼就能看出差别'
+6	'每种项目模块都生成了至少 3 个示例项目'
+7	'不该有示例项目被 sanitize 丢掉'
+8	'示例项目字段完整、类型正确、id 唯一'
+9	`id 重复：${project.id}`
+10	'日常工作里必须有技术分享准备与季度汇报'
+11	`示例里不该再有旧案例：${stale}`
+12	`缺少 ${level} 的示例项目`
+13	'同样的日期生成同样的结果（可重复）'
+14	'示例数据能直接通过存储层的结构收敛'
+15	`${module} 应出现在说明里`
+16	'侧栏能按模块统计出示例数据'
+17	'示例项目应带「示例」标签'
+18	'每个示例都要有一句话说明'
+19	'示例内容都是研发工作语境'
+20	'示例的待跟进事项太少'
+21	'缺少技术分享准备'
+22	'缺少季度汇报'
+23	'供应商比价'
+24	'日常工作'
+25	'拜访材料'
+26	'内训课件'
+27	'示例'
+28	'服务'
+29	'接口'
+30	'依赖'
+31	'告警'
+32	'性能'
+33	'开源'
+34	'测试'
+35	'代码'
+36	'报销'
+
+### test/server.test.js (44)
+0	'好的，这是计划：\\n```json\\n{"intent":"add","reply":"新增一个项目","actions":[{"op":"add","name":"服务网格试点","module":"公司项目","dueDate":"月底"}]}\\n```'
+1	'{"op":"update","target":"订单结算服务重构","changes":{"progress":80,"dueDate":"下周五"}},{"op":"delete","target":"不存在的项目"}]}'
+2	'{"intent":"query","reply":"本周只有官网改版要交付。","actions":[]}'
+3	'{"intent":"update","reply":"把进度调到 80%","actions":['
+4	'extractJson 容忍代码块与前后废话，assemblyText 只取文本块'
+5	'好的，这是计划：{"intent":"add","actions":[]} 完'
+6	'Config 必须是 Schemastery schema，不能是普通对象'
+7	'GET/POST /state 完成一次完整读写，并对旧版本号返回 409'
+8	'POST /state 对非法 JSON 与超大请求体返回 4xx'
+9	'把订单结算服务重构的 DDL 改到下周五，进度调整到 80%'
+10	'模型只回 query 时用回复作答，没有回复则退回本地问答'
+11	'模型可用时，/ai 走模型并把 JSON 收敛成计划'
+12	'模型报错、没有 JSON、没有服务时都退回本地规则'
+13	`${route.path} 不在本工作台前缀下`
+14	'没有可用模型时，/ai 退回本地规则并说明原因'
+15	`缺少路由 ${method} ${path}`
+16	'路由都挂在自己的前缀下，且每个路径只注册一次'
+17	'测试宿主没有 llm 服务，应退回规则解析'
+18	'GET /meta 报告插件名与数据目录'
+19	'进度调到 80%，DDL 改到下周五'
+20	'把订单结算服务重构的进度改成 90%'
+21	'服务端入口的必须是规范要求的样子'
+22	'模型输出带代码块和废话也能解析'
+23	'模型没给回复时应由本地问答补上'
+24	'/ai 对空指令返回 4xx'
+25	'本周只有官网改版要交付。'
+26	'流以 error 结束'
+27	'stream 直接抛错'
+28	'找不到的项目要被丢掉'
+29	'输出没有 JSON'
+30	'没有 llm 服务'
+31	'订单结算服务重构'
+32	'新增服务网格试点'
+33	'我不知道该怎么改'
+34	'这周要交付什么？'
+35	'这周要交付什么'
+36	'没有 JSON'
+37	'服务网格试点'
+38	'没有默认模型'
+39	'适配器挂了'
+40	'结算系统'
+41	'公司项目'
+42	'配额不足'
+43	'进行中'
+
+### test/store.test.js (19)
+0	'写入会收敛脏数据：丢弃无名项目、夹紧进度、修掉重复 id'
+1	'seededAt 会被保留，但仍受结构收敛约束'
+2	'sanitizeState 拒绝非对象输入'
+3	'meta 返回目录、文件与计数，便于探活'
+4	'版本号过期时拒绝写入并给出 409'
+5	'没有数据目录时报错而不是写到别处'
+6	'空目录读出空文档且版本号为 0'
+7	'并发写入被串行化，只有一个成功'
+8	'写入后版本号自增并可原样读回'
+9	'损坏的数据文件不会被静默覆盖'
+10	'读取不应创建任何文件'
+11	'{ 这不是 JSON'
+12	'非法时间戳应被清掉'
+13	'完成对账接口'
+14	'结算系统'
+15	'公司项目'
+16	'联调支付'
+17	'进行中'
+18	'有效'
+
+### test/views.test.js (38)
+0	'searchText 覆盖名称、负责人、标签、待跟进与最近进展'
+1	'selectProjects 同时应用模块、智能视图与关键字'
+2	'railModules 固定模块在前，自定义模块在后并带计数'
+3	'groupByModule 丢掉空模块并按风险排序组内项目'
+4	'ATTENTION_LEVELS 只含危险与观察等级'
+5	'selectProjects 结果始终按风险排序'
+6	'智能视图覆盖需关注/逾期/本周/待跟进/已完成'
+7	'groupByModule 对空列表返回空数组'
+8	'matchesSmartView 按条件筛选'
+9	'railViews 给出每个智能视图的计数'
+10	'summarize 汇总计数与平均进度'
+11	`${needle} 应可被搜到`
+12	'其他项目下的阻塞计入需关注'
+13	'公司项目里有一个逾期'
+14	'空视图表示不过滤'
+15	'组内也按风险排序'
+16	'不存在的词'
+17	'结算系统'
+18	'公司项目'
+19	'官网改版'
+20	'日常工作'
+21	'其他项目'
+22	'内训课件'
+23	'副业原型'
+24	'副业试验'
+25	'本周到期'
+26	'联调完成'
+27	'补齐用例'
+28	'空的模块'
+29	'进行中'
+30	'小程序'
+31	'已完成'
+32	'对账'
+33	'设计'
+34	'阻塞'
+35	'张三'
+36	'财务'
+37	'我'

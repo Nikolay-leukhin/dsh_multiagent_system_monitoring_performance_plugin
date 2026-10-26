@@ -1,0 +1,2260 @@
+unique=811 units=1173
+### 1ф ["dsh/server.js"]
+'请求体过大。'
+### 1ф ["dsh/server.js"]
+'请求需要一个 JSON 请求体。'
+### 1ф ["dsh/server.js"]
+'请求体不是合法 JSON。'
+### 1ф ["dsh/server.js"]
+'模型没有返回 JSON 计划'
+### 1ф ["dsh/server.js"]
+'宿主没有提供可用的 llm 服务'
+### 1ф ["dsh/server.js"]
+'没有解析到默认模型'
+### 1ф ["dsh/server.js"]
+'你是一个项目管理助手，把用户的中文指令翻译成对工作台项目数据的操作计划。'
+### 1ф ["dsh/server.js"]
+'只输出一个 JSON 对象，不要解释，不要输出代码块以外的内容。'
+### 1ф ["dsh/server.js"]
+'当前项目快照（JSON，只能引用这里出现过的项目名或 id）：'
+### 1ф ["dsh/server.js"]
+`用户指令：${instruction}`
+### 1ф ["dsh/server.js"]
+`模型调用没有正常结束：${detail}`
+### 2ф ["dsh/server.js","dsh/store.js"]
+'无法读取项目数据。'
+### 1ф ["dsh/server.js"]
+'无法处理项目数据请求。'
+### 1ф ["dsh/server.js"]
+'请先输入一句指令。'
+### 1ф ["dsh/server.js"]
+'无法解析这句话。'
+### 13ф ["dsh/store.js","src/client/panel.js","src/client/screens.js","src/shared/analysis.js","src/shared/insights.js","src/shared/sample.js","src/shared/views.js","test/aiplan.test.js","test/analysis.test.js","test/client-bundle.test.js","test/insights.test.js","test/query.test.js","test/views.test.js"]
+'其他项目'
+### 16ф ["dsh/store.js","src/client/panel.js","src/client/screens.js","src/shared/analysis.js","src/shared/insights.js","src/shared/sample.js","src/shared/views.js","test/aiplan.test.js","test/analysis.test.js","test/client-bundle.test.js","test/insights.test.js","test/prompt.test.js","test/query.test.js","test/server.test.js","test/store.test.js","test/views.test.js"]
+'进行中'
+### 1ф ["dsh/store.js"]
+'项目数据必须是一个对象。'
+### 1ф ["dsh/store.js"]
+'项目数据文件无法解析，请修复或移走该文件后重试。'
+### 1ф ["dsh/store.js"]
+'项目数据文件格式不正确。'
+### 1ф ["dsh/store.js"]
+'project-console: 数据目录未配置'
+### 1ф ["dsh/store.js"]
+'项目数据文件过大。'
+### 1ф ["dsh/store.js"]
+'项目数据过大，未保存。'
+### 1ф ["dsh/store.js"]
+'项目数据写入失败。'
+### 1ф ["dsh/store.js"]
+'项目数据已在其他窗口更新，请重新加载后再保存。'
+### 1ф ["scripts/build-client.mjs"]
+')) throw new Error(`build-client: ${absPath} 位于 src/ 之外`)
+  return relative
+}
+
+const namedBindings = (list) => list.split('
+### 1ф ["scripts/build-client.mjs"]
+')
+
+/** 把一条 import 行解析成 `__require(...)`；相对模块先递归收集。 */
+async function resolveImport(spec, fromAbs, id) {
+  if (!spec.startsWith('
+### 1ф ["scripts/build-client.mjs"]
+')) {
+    if (!BARE.test(spec)) throw new Error(`build-client: ${id} 引用了不支持的模块标识 ${spec}`)
+    return spec
+  }
+  const base = resolve(dirname(fromAbs), spec)
+  const absolute = base.endsWith('
+### 1ф ["scripts/build-client.mjs"]
+')
+  } catch {
+    throw new Error(`build-client: 找不到 ${absPath}`)
+  }
+
+  const pending = { id, body: [], exports: [] }
+  modules.set(id, pending) // 先登记，允许模块之间互相引用
+
+  for (const line of source.split('
+### 1ф ["scripts/build-client.mjs"]
+')) {
+      let match = IMPORT_DEFAULT.exec(trimmed)
+      if (match) {
+        pending.body.push(`const ${match[1]} = __require(${JSON.stringify(await resolveImport(match[2], absPath, id))})`)
+        continue
+      }
+      match = IMPORT_NAMED.exec(trimmed)
+      if (match) {
+        pending.body.push(`const { ${namedBindings(match[1])} } = __require(${JSON.stringify(await resolveImport(match[2], absPath, id))})`)
+        continue
+      }
+      match = IMPORT_SIDE.exec(trimmed)
+      if (match) {
+        pending.body.push(`__require(${JSON.stringify(await resolveImport(match[1], absPath, id))})`)
+        continue
+      }
+      throw new Error(`build-client: ${id} 有一行无法识别的 import：${trimmed}`)
+    }
+    if (trimmed.startsWith('
+### 1ф ["scripts/build-client.mjs"]
+').map((entry) => entry.trim()).filter(Boolean)) {
+          const alias = /^([A-Za-z_$][\w$]*):\s*([A-Za-z_$][\w$]*)$/.exec(name)
+          pending.exports.push(alias ? alias[1] : name)
+        }
+        continue
+      }
+      const match = EXPORT_DECL.exec(trimmed)
+      if (!match) throw new Error(`build-client: ${id} 只支持 export function/class/const/let/var 或 export { a, b }：${trimmed}`)
+      pending.exports.push(match[2])
+      pending.body.push(`${match[1]} ${match[2]}${match[3]}`)
+      continue
+    }
+    pending.body.push(line)
+  }
+  return id
+}
+
+const entryId = await collect(resolve(SRC, ENTRY))
+
+const indent = (line) => (line === '
+### 1ф ["scripts/build-client.mjs"]
+')}\n  }`
+})
+
+const output = `// 本文件由 scripts/build-client.mjs 从 src/ 生成，请勿直接修改。
+window.__ModuleLoader__.load({
+  id: ${JSON.stringify(PACKAGE_NAME)},
+  factory: (require) => {
+    const __factories = Object.create(null)
+    const __cache = Object.create(null)
+    function __require(id) {
+      if (__factories[id] === undefined) return require(id)
+      if (__cache[id] !== undefined) return __cache[id].exports
+      const module = { exports: {} }
+      __cache[id] = module
+      __factories[id](module.exports, module, __require)
+      return module.exports
+    }
+${rendered.join('
+### 1ф ["scripts/build-client.mjs"]
+')
+process.stdout.write(`build-client: ${modules.size} 个模块 -> ${OUT}（${Buffer.byteLength(output)} 字节）\n`)
+
+### 1ф ["scripts/check-workbench-package.mjs"]
+`check-workbench-package: 找不到 ${tarballPath}`
+### 1ф ["scripts/check-workbench-package.mjs"]
+'check-workbench-package: tarball 里没有 package.json'
+### 1ф ["scripts/check-workbench-package.mjs"]
+`check-workbench-package: ${root} 不是工作台包（缺少 package.json）`
+### 1ф ["scripts/check-workbench-package.mjs"]
+'package.json 缺少 name'
+### 1ф ["scripts/check-workbench-package.mjs"]
+`version = ${manifest.version}（完整 SemVer）`
+### 1ф ["scripts/check-workbench-package.mjs"]
+`version 不是完整 SemVer：${JSON.stringify(manifest.version)}`
+### 1ф ["scripts/check-workbench-package.mjs"]
+'建议设置 "type": "module"'
+### 1ф ["scripts/check-workbench-package.mjs"]
+`服务端入口存在：${mainPath}`
+### 1ф ["scripts/check-workbench-package.mjs"]
+`main / exports["."] 未指向包内存在的文件：${JSON.stringify(mainEntry)}`
+### 1ф ["scripts/check-workbench-package.mjs"]
+'exports["."] 必须指向服务端入口'
+### 1ф ["scripts/check-workbench-package.mjs"]
+`建议声明 exports["${key}"]`
+### 1ф ["scripts/check-workbench-package.mjs"]
+'缺少 dsh.bundle.patch，包不会作为插件层激活'
+### 1ф ["scripts/check-workbench-package.mjs"]
+`dsh.bundle.patch 指向的文件不在包里：${patchPath}`
+### 1ф ["scripts/check-workbench-package.mjs"]
+`补丁文件是空的（或只有注释）：${patchPath}`
+### 1ф ["scripts/check-workbench-package.mjs"]
+`补丁文件存在且非空：${patchPath}`
+### 1ф ["scripts/check-workbench-package.mjs"]
+'补丁文件里没有 insert 行'
+### 1ф ["scripts/check-workbench-package.mjs"]
+'insert 行没有写 name（必须是 npm 包名）'
+### 1ф ["scripts/check-workbench-package.mjs"]
+`insert 的 name 必须是包名：期望 ${manifest.name}，实际 ${nameMatch[1].trim()}`
+### 1ф ["scripts/check-workbench-package.mjs"]
+'insert.name 不能写相对或绝对路径'
+### 1ф ["scripts/check-workbench-package.mjs"]
+'缺少 dsh.client 声明，客户端模块不会被加载'
+### 1ф ["scripts/check-workbench-package.mjs"]
+`dsh.client.platform 必须是 "web"，实际 ${JSON.stringify(client.platform)}`
+### 1ф ["scripts/check-workbench-package.mjs"]
+'dsh.client.inject 必须是字符串数组'
+### 1ф ["scripts/check-workbench-package.mjs"]
+'dsh.client.inject 必须包含 "dsh-desktop-workbenches"，否则工作台能力不会先就绪'
+### 1ф ["scripts/check-workbench-package.mjs"]
+`dsh.client.inject 含 dsh-desktop-workbenches（${inject.length} 项）`
+### 1ф ["scripts/check-workbench-package.mjs"]
+'声明了 dsh.client 就必须导出 exports["./client"]'
+### 1ф ["scripts/check-workbench-package.mjs"]
+`exports["./client"] 指向的文件不在包里：${clientEntry}`
+### 1ф ["scripts/check-workbench-package.mjs"]
+`客户端产物存在：${clientEntry}`
+### 1ф ["scripts/check-workbench-package.mjs"]
+'客户端产物没有调用 window.__ModuleLoader__.load'
+### 1ф ["scripts/check-workbench-package.mjs"]
+'无法从客户端产物里读出 load({ id })'
+### 1ф ["scripts/check-workbench-package.mjs"]
+`客户端模块 id 必须等于包名：期望 ${manifest.name}，实际 ${idMatch[1]}`
+### 1ф ["scripts/check-workbench-package.mjs"]
+`客户端模块 id = ${manifest.name}`
+### 1ф ["scripts/check-workbench-package.mjs"]
+`客户端 require 了未在 dsh.client.external 声明的模块：${missing.join('、')}`
+### 1ф ["scripts/check-workbench-package.mjs"]
+'声明了 @deepseek-ai/schemastery'
+### 1ф ["scripts/check-workbench-package.mjs"]
+'建议声明 @deepseek-ai/schemastery（服务端 Config 需要它）'
+### 1ф ["scripts/check-workbench-package.mjs"]
+`声明了 Harness peer：${dshPeers.map(([name, range]) => `${name}@${range}`).join('、')}；范围必须显式包含预发布分支，否则安装时报 ERESOLVE`
+### 1ф ["scripts/check-workbench-package.mjs"]
+`files 未包含必需文件：${missing.join('、')}`
+### 1ф ["scripts/check-workbench-package.mjs"]
+'files 覆盖补丁、服务端入口与客户端产物'
+### 1ф ["scripts/check-workbench-package.mjs"]
+'建议用 files 显式限定打包内容'
+### 1ф ["scripts/check-workbench-package.mjs"]
+`包里疑似有敏感文件：${suspicious.join('、')}`
+### 1ф ["scripts/check-workbench-package.mjs"]
+'未发现常见敏感文件'
+### 1ф ["scripts/check-workbench-package.mjs"]
+`无法导入服务端入口做运行时检查：${server.message}`
+### 1ф ["scripts/check-workbench-package.mjs"]
+`服务端 name 必须等于包名：期望 ${manifest.name}，实际 ${server.name}`
+### 1ф ["scripts/check-workbench-package.mjs"]
+`服务端 name = ${manifest.name}`
+### 1ф ["scripts/check-workbench-package.mjs"]
+'服务端 inject 必须包含 "connection"'
+### 1ф ["scripts/check-workbench-package.mjs"]
+`服务端 inject = ${JSON.stringify(server.inject)}`
+### 1ф ["scripts/check-workbench-package.mjs"]
+'服务端 Config 必须是 Schemastery schema（不能是普通对象）'
+### 1ф ["scripts/check-workbench-package.mjs"]
+'Config 没有校验 root 必填'
+### 1ф ["scripts/check-workbench-package.mjs"]
+'Config 是 Schemastery schema 且校验必填项'
+### 1ф ["scripts/check-workbench-package.mjs"]
+'服务端没有导出 apply'
+### 1ф ["scripts/check-workbench-package.mjs"]
+'服务端导出 apply'
+### 1ф ["scripts/check-workbench-package.mjs"]
+'  · tarball 模式跳过服务端入口的运行时检查（需要可解析的依赖）'
+### 1ф ["scripts/check-workbench-package.mjs"]
+`工作台包校验：${sourceLabel}`
+### 1ф ["scripts/check-workbench-package.mjs"]
+`包名 ${manifest.name}@${manifest.version}，共 ${files.length} 个文件`
+### 1ф ["scripts/check-workbench-package.mjs"]
+'\n建议项：'
+### 1ф ["scripts/check-workbench-package.mjs"]
+'\n必须项未通过：'
+### 1ф ["scripts/check-workbench-package.mjs"]
+`\n结论：不通过（${failures.length} 项必须项）`
+### 1ф ["scripts/check-workbench-package.mjs"]
+`\n结论：通过（必须项全部满足，建议项 ${warnings.length} 条）`
+### 1ф ["src/client/api.js"]
+`请求失败（HTTP ${response.status}）`
+### 1ф ["src/client/api.js"]
+'服务端返回了无法识别的数据。'
+### 1ф ["src/client/api.js"]
+'服务端还没加载 AI 解析接口（重启 Harness 后可用）。'
+### 1ф ["src/client/api.js"]
+'服务端没有返回可用的变更计划。'
+### 1ф ["src/client/charts.js"]
+'分布'
+### 1ф ["src/client/charts.js"]
+`${label}：${slices.map((slice) => `${slice.label ?? slice.key} ${slice.count}`).join('，') || '无数据'}`
+### 2ф ["src/client/charts.js","src/client/screens.js"]
+'项目'
+### 1ф ["src/client/charts.js"]
+'暂无数据'
+### 1ф ["src/client/charts.js"]
+`${row.label}：${row.segments.map((segment) => `${segment.label} ${segment.value}`).join('，')}`
+### 1ф ["src/client/charts.js"]
+`${bucket.label}：${bucket.count} 个`
+### 1ф ["src/client/charts.js"]
+`其中 ${row.danger} 个需关注`
+### 2ф ["src/client/index.js","src/client/panel.js"]
+'项目总控台'
+### 1ф ["src/client/index.js"]
+'按模块管理全部项目：状态、进度、待跟进与 DDL 风险一屏看完，可问询、可生成汇报文档。'
+### 1ф ["src/client/index.js"]
+'项目管理'
+### 3ф ["src/client/panel.js","src/shared/aiplan.js","src/shared/prompt.js"]
+'记录'
+### 3ф ["src/client/panel.js","src/shared/aiplan.js","src/shared/prompt.js"]
+'进展'
+### 12ф ["src/client/panel.js","src/shared/aiplan.js","src/shared/analysis.js","src/shared/prompt.js","src/shared/query.js","src/shared/sample.js","test/aiplan.test.js","test/analysis.test.js","test/client-bundle.test.js","test/insights.test.js","test/query.test.js","test/views.test.js"]
+'阻塞'
+### 3ф ["src/client/panel.js","src/shared/aiplan.js","src/shared/prompt.js"]
+'决策'
+### 1ф ["src/client/panel.js"]
+'把订单结算服务重构的 DDL 改到下周五，进度调到 80%'
+### 1ф ["src/client/panel.js"]
+'新增项目：服务网格试点，放到公司项目，截止月底'
+### 1ф ["src/client/panel.js"]
+'给内部分享《线上问题定位实战》准备加一条待跟进：周五前做一次预讲'
+### 1ф ["src/client/panel.js"]
+'删掉副业小程序原型'
+### 3ф ["src/client/panel.js","test/aiplan.test.js","test/server.test.js"]
+'这周要交付什么？'
+### 1ф ["src/client/panel.js"]
+'概览'
+### 1ф ["src/client/panel.js"]
+'模块看板'
+### 1ф ["src/client/panel.js"]
+'状态看板'
+### 1ф ["src/client/panel.js"]
+'列表'
+### 1ф ["src/client/panel.js"]
+'日历'
+### 1ф ["src/client/panel.js"]
+'时间线'
+### 3ф ["src/client/panel.js","src/client/screens.js","src/shared/insights.js"]
+'待跟进'
+### 1ф ["src/client/panel.js"]
+'读取项目数据失败。'
+### 1ф ["src/client/panel.js"]
+'操作失败。'
+### 1ф ["src/client/panel.js"]
+'保存失败。'
+### 2ф ["src/client/panel.js","src/shared/sample.js"]
+'、'
+### 1ф ["src/client/panel.js"]
+'问一句'
+### 1ф ["src/client/panel.js"]
+'在本机数据上直接回答'
+### 1ф ["src/client/panel.js"]
+'询问项目情况'
+### 1ф ["src/client/panel.js"]
+'问一句：哪些项目这周到期？有什么风险？'
+### 1ф ["src/client/panel.js"]
+'提问'
+### 1ф ["src/client/panel.js"]
+'模型解析'
+### 1ф ["src/client/panel.js"]
+'本地规则解析'
+### 1ф ["src/client/panel.js"]
+'解析失败。'
+### 1ф ["src/client/panel.js"]
+'取消'
+### 1ф ["src/client/panel.js"]
+`确认执行 ${changeCount} 项变更`
+### 2ф ["src/client/panel.js","src/client/ui.js"]
+'关闭'
+### 1ф ["src/client/panel.js"]
+'AI 填充'
+### 1ф ["src/client/panel.js"]
+'用一句话说明要做什么，AI 会判断是新增、修改、删除还是查询；增删改都要你确认后才会写入。'
+### 1ф ["src/client/panel.js"]
+'AI 填充指令'
+### 1ф ["src/client/panel.js"]
+'例如：把订单结算服务重构的 DDL 改到下周五，进度调到 80%'
+### 1ф ["src/client/panel.js"]
+'解析中…'
+### 1ф ["src/client/panel.js"]
+'解析'
+### 1ф ["src/client/panel.js"]
+'解析结果'
+### 1ф ["src/client/panel.js"]
+`（${String(state.reason).slice(0, 60)}）`
+### 1ф ["src/client/panel.js"]
+'以上变更会在你点「确认执行」后一次性写入。'
+### 3ф ["src/client/panel.js","src/client/screens.js","src/shared/aiplan.js"]
+'模块'
+### 3ф ["src/client/panel.js","src/client/screens.js","src/shared/aiplan.js"]
+'状态'
+### 2ф ["src/client/panel.js","src/shared/aiplan.js"]
+'负责人'
+### 3ф ["src/client/panel.js","src/shared/insights.js","test/insights.test.js"]
+'未指定'
+### 3ф ["src/client/panel.js","src/client/screens.js","src/shared/aiplan.js"]
+'进度'
+### 2ф ["src/client/panel.js","src/shared/aiplan.js"]
+'开始'
+### 1ф ["src/client/panel.js"]
+'未填'
+### 3ф ["src/client/panel.js","src/client/screens.js","src/shared/aiplan.js"]
+'截止'
+### 5ф ["src/client/panel.js","src/client/screens.js","src/shared/analysis.js","src/shared/insights.js","test/analysis.test.js"]
+'未排期'
+### 2ф ["src/client/panel.js","src/client/screens.js"]
+'剩余'
+### 1ф ["src/client/panel.js"]
+'最近更新'
+### 1ф ["src/client/panel.js"]
+'时间风险'
+### 2ф ["src/client/panel.js","src/shared/aiplan.js"]
+'说明'
+### 1ф ["src/client/panel.js"]
+`进展记录 · ${updates.length}`
+### 1ф ["src/client/panel.js"]
+'记录类型'
+### 1ф ["src/client/panel.js"]
+'今天推进了什么 / 卡在哪 / 决定了什么'
+### 1ф ["src/client/panel.js"]
+'新增进展记录'
+### 1ф ["src/client/panel.js"]
+'追加'
+### 1ф ["src/client/panel.js"]
+'还没有进展记录。'
+### 1ф ["src/client/panel.js"]
+`待跟进 · 未完成 ${open.length} / 共 ${todos.length}`
+### 1ф ["src/client/panel.js"]
+'新增待跟进事项'
+### 1ф ["src/client/panel.js"]
+'待跟进截止日期'
+### 1ф ["src/client/panel.js"]
+'添加'
+### 1ф ["src/client/panel.js"]
+`标记完成：${todo.title}`
+### 1ф ["src/client/panel.js"]
+`截止 ${todo.dueDate}`
+### 1ф ["src/client/panel.js"]
+'删除事项'
+### 1ф ["src/client/panel.js"]
+'没有待跟进事项。'
+### 1ф ["src/client/panel.js"]
+'AI 助手'
+### 1ф ["src/client/panel.js"]
+'生成后复制到旁边的会话发送'
+### 1ф ["src/client/panel.js"]
+'分析这个项目的进展'
+### 1ф ["src/client/panel.js"]
+`生成${doc.label}`
+### 1ф ["src/client/panel.js"]
+'编辑项目'
+### 1ф ["src/client/panel.js"]
+'删除项目'
+### 1ф ["src/client/panel.js"]
+'项目名称不能为空。'
+### 1ф ["src/client/panel.js"]
+'新建项目'
+### 1ф ["src/client/panel.js"]
+'保存修改'
+### 1ф ["src/client/panel.js"]
+'创建项目'
+### 1ф ["src/client/panel.js"]
+'项目名称 *'
+### 1ф ["src/client/panel.js"]
+'例如：订单结算服务重构'
+### 1ф ["src/client/panel.js"]
+'项目名称'
+### 1ф ["src/client/panel.js"]
+'所属模块'
+### 1ф ["src/client/panel.js"]
+'可直接输入新的模块名'
+### 1ф ["src/client/panel.js"]
+'我 / 谁'
+### 1ф ["src/client/panel.js"]
+'开始日期'
+### 1ф ["src/client/panel.js"]
+'截止日期（DDL）'
+### 1ф ["src/client/panel.js"]
+'截止日期'
+### 1ф ["src/client/panel.js"]
+`进度 ${clampProgress({ progress: Number(form.progress) })}%`
+### 1ф ["src/client/panel.js"]
+'相关链接'
+### 1ф ["src/client/panel.js"]
+'需求文档 / 仓库 / 看板地址'
+### 1ф ["src/client/panel.js"]
+'标签'
+### 1ф ["src/client/panel.js"]
+'用、或逗号分隔'
+### 1ф ["src/client/panel.js"]
+'后端、财务'
+### 1ф ["src/client/panel.js"]
+'一句话说明'
+### 1ф ["src/client/panel.js"]
+'这个项目要交付什么'
+### 4ф ["src/client/panel.js","src/shared/analysis.js","src/shared/views.js","test/analysis.test.js"]
+'全部'
+### 1ф ["src/client/panel.js"]
+'筛选结果'
+### 1ф ["src/client/panel.js"]
+`进展分析提示词 · ${project.name}`
+### 1ф ["src/client/panel.js"]
+'进展分析提示词 · 全部项目'
+### 1ф ["src/client/panel.js"]
+`进展分析-${project ? project.name : '全部项目'}-${today}.md`
+### 1ф ["src/client/panel.js"]
+'文档'
+### 1ф ["src/client/panel.js"]
+`${label} · ${project ? project.name : '全部项目'}`
+### 1ф ["src/client/panel.js"]
+`${label}-${project ? project.name : '全部项目'}-${today}.md`
+### 1ф ["src/client/panel.js"]
+`已生成 ${sampleSummary(samples)}，可随时删除或清空`
+### 1ф ["src/client/panel.js"]
+`首次进入，已生成 ${sampleSummary(samples)}；可随时删除或清空`
+### 1ф ["src/client/panel.js"]
+`AI 填充已执行：${planSummary(plan)}`
+### 1ф ["src/client/panel.js"]
+'已撤销上一次 AI 填充'
+### 1ф ["src/client/panel.js"]
+'已复制，粘贴到旁边的会话发送即可'
+### 1ф ["src/client/panel.js"]
+'复制失败，请手动全选复制'
+### 2ф ["src/client/panel.js","src/shared/prompt.js"]
+'全部项目'
+### 1ф ["src/client/panel.js"]
+`搜索「${keyword.trim()}」`
+### 1ф ["src/client/panel.js"]
+`${dashboard.total} 个项目 · ${rail.filter((item) => item.total > 0).length} 个模块 · ${dashboard.attention} 个需关注`
+### 1ф ["src/client/panel.js"]
+'搜索项目、负责人、标签或待跟进…'
+### 1ф ["src/client/panel.js"]
+'搜索项目'
+### 1ф ["src/client/panel.js"]
+'刷新数据'
+### 1ф ["src/client/panel.js"]
+'用自然语言增删改查项目'
+### 1ф ["src/client/panel.js"]
+'看板维度'
+### 1ф ["src/client/panel.js"]
+`${scopeLabel} · ${selection.length} 个`
+### 1ф ["src/client/panel.js"]
+'没有符合条件的项目'
+### 1ф ["src/client/panel.js"]
+'试试换个模块、清掉智能视图，或者改一下搜索词。'
+### 1ф ["src/client/panel.js"]
+'模块与智能视图'
+### 1ф ["src/client/panel.js"]
+`${entry.name} · ${entry.total} 个项目`
+### 1ф ["src/client/panel.js"]
+'智能视图'
+### 1ф ["src/client/panel.js"]
+'保存中…'
+### 1ф ["src/client/panel.js"]
+'读取失败'
+### 1ф ["src/client/panel.js"]
+`已保存 · 修订 ${revision}`
+### 1ф ["src/client/panel.js"]
+'按模块生成示例项目'
+### 1ф ["src/client/panel.js"]
+'示例数据'
+### 1ф ["src/client/panel.js"]
+'清空'
+### 1ф ["src/client/panel.js"]
+'数据存于 DSH 数据目录，卸载工作台不会删除'
+### 1ф ["src/client/panel.js"]
+'重新加载'
+### 1ф ["src/client/panel.js"]
+'重试'
+### 1ф ["src/client/panel.js"]
+`AI 填充已执行：${aiApplied.summary}`
+### 1ф ["src/client/panel.js"]
+'撤销'
+### 1ф ["src/client/panel.js"]
+'复制'
+### 1ф ["src/client/panel.js"]
+`已下载 ${aiOutput.filename}`
+### 1ф ["src/client/panel.js"]
+'下载失败'
+### 1ф ["src/client/panel.js"]
+'下载 .md'
+### 1ф ["src/client/panel.js"]
+'收起'
+### 1ф ["src/client/panel.js"]
+'这是给 Agent 的提示词：复制后粘贴到旁边的原生会话发送，Agent 会基于这些登记数据做分析。'
+### 1ф ["src/client/panel.js"]
+'已创建项目'
+### 1ф ["src/client/panel.js"]
+'已保存修改'
+### 1ф ["src/client/panel.js"]
+'清空全部项目？'
+### 1ф ["src/client/panel.js"]
+'已清空全部项目'
+### 1ф ["src/client/panel.js"]
+'确认清空'
+### 1ф ["src/client/panel.js"]
+`将删除工作台里的 ${projects.length} 条项目记录（含示例数据）。不会动任何文件或工作区。`
+### 1ф ["src/client/panel.js"]
+`删除「${confirmDelete.name}」？`
+### 1ф ["src/client/panel.js"]
+'已删除项目'
+### 1ф ["src/client/panel.js"]
+'确认删除'
+### 1ф ["src/client/panel.js"]
+'删除只影响本工作台里的这条记录，不会动任何文件或工作区。'
+### 1ф ["src/client/screens.js"]
+`${project.name}｜${risk.label}`
+### 1ф ["src/client/screens.js"]
+'进度 '
+### 1ф ["src/client/screens.js"]
+'待跟进 '
+### 1ф ["src/client/screens.js"]
+`${group.stats.total} 个`
+### 1ф ["src/client/screens.js"]
+`${group.stats.danger + group.stats.watch} 个需关注`
+### 1ф ["src/client/screens.js"]
+'节奏正常'
+### 1ф ["src/client/screens.js"]
+`待跟进 ${group.stats.openTodos}`
+### 1ф ["src/client/screens.js"]
+`平均进度 ${group.stats.avgProgress}%`
+### 1ф ["src/client/screens.js"]
+'风险'
+### 1ф ["src/client/screens.js"]
+`pc-accent-dot pc-accent-${accentOf(accents, project.module || '其他项目')}`
+### 1ф ["src/client/screens.js"]
+'没有可展示的项目'
+### 1ф ["src/client/screens.js"]
+'当前筛选下没有项目。'
+### 1ф ["src/client/screens.js"]
+`${column.stats.danger} 危险`
+### 1ф ["src/client/screens.js"]
+'日'
+### 1ф ["src/client/screens.js"]
+'一'
+### 1ф ["src/client/screens.js"]
+'二'
+### 1ф ["src/client/screens.js"]
+'三'
+### 1ф ["src/client/screens.js"]
+'四'
+### 1ф ["src/client/screens.js"]
+'五'
+### 1ф ["src/client/screens.js"]
+'六'
+### 1ф ["src/client/screens.js"]
+`本月 ${model.monthItems} 个节点 · ${model.daysWithItems} 天有安排`
+### 1ф ["src/client/screens.js"]
+'上个月'
+### 2ф ["src/client/screens.js","test/aiplan.test.js"]
+'今天'
+### 1ф ["src/client/screens.js"]
+'下个月'
+### 1ф ["src/client/screens.js"]
+`${item.label}：${item.title}`
+### 1ф ["src/client/screens.js"]
+`${selected.items.length} 项`
+### 1ф ["src/client/screens.js"]
+'当天没有安排'
+### 1ф ["src/client/screens.js"]
+'这一天没有 DDL，也没有待跟进事项。'
+### 1ф ["src/client/screens.js"]
+'完成'
+### 1ф ["src/client/screens.js"]
+'没有可排期的项目'
+### 1ф ["src/client/screens.js"]
+'给项目填上开始与截止日期，就能在这里看到时间线。'
+### 1ф ["src/client/screens.js"]
+`${model.from} → ${model.to}（${model.totalDays} 天）`
+### 1ф ["src/client/screens.js"]
+'跨度较长，只显示前 210 天'
+### 1ф ["src/client/screens.js"]
+`今天 ${today}`
+### 1ф ["src/client/screens.js"]
+`pc-accent-dot pc-accent-${accentOf(accents, row.project.module || '其他项目')}`
+### 1ф ["src/client/screens.js"]
+`${row.project.name}｜${row.startIso} → ${row.endIso}｜${row.risk.label}`
+### 1ф ["src/client/screens.js"]
+'待跟进清单是空的'
+### 1ф ["src/client/screens.js"]
+'所有事项都完成了。'
+### 1ф ["src/client/screens.js"]
+`完成：${item.title}`
+### 1ф ["src/client/screens.js"]
+`逾期 ${item.overdueDays} 天`
+### 1ф ["src/client/screens.js"]
+`${row.total} 个 · 平均 ${row.avgProgress}%`
+### 1ф ["src/client/screens.js"]
+'危险'
+### 1ф ["src/client/screens.js"]
+'关注'
+### 3ф ["src/client/screens.js","src/shared/analysis.js","test/analysis.test.js"]
+'正常'
+### 1ф ["src/client/screens.js"]
+`${row.openTodos} 待跟进`
+### 1ф ["src/client/screens.js"]
+`pc-accent-dot pc-accent-${accentOf(accents, item.project.module || '其他项目')}`
+### 1ф ["src/client/screens.js"]
+'项目总数'
+### 1ф ["src/client/screens.js"]
+`${kpis.active} 个进行中`
+### 2ф ["src/client/screens.js","src/shared/views.js"]
+'需关注'
+### 1ф ["src/client/screens.js"]
+`逾期 ${kpis.overdue} · 阻塞 ${kpis.blocked}`
+### 1ф ["src/client/screens.js"]
+`${kpis.todoOverdue} 项已逾期`
+### 1ф ["src/client/screens.js"]
+'暂无逾期事项'
+### 3ф ["src/client/screens.js","src/shared/views.js","test/views.test.js"]
+'本周到期'
+### 1ф ["src/client/screens.js"]
+'本周日之前'
+### 1ф ["src/client/screens.js"]
+'平均进度'
+### 1ф ["src/client/screens.js"]
+`已完成 ${kpis.done} 个`
+### 1ф ["src/client/screens.js"]
+'还没填 DDL'
+### 1ф ["src/client/screens.js"]
+'今天该盯什么'
+### 2ф ["src/client/screens.js","src/shared/insights.js"]
+'还没有项目，先登记几个再来看板。'
+### 1ф ["src/client/screens.js"]
+`${kpis.attention} 个需关注 · ${kpis.overdue} 个逾期 · ${kpis.danger} 个危险 · 本周到期 ${kpis.weekDue} 个`
+### 1ф ["src/client/screens.js"]
+'风险分布'
+### 1ф ["src/client/screens.js"]
+'模块负载'
+### 1ф ["src/client/screens.js"]
+'还没有项目'
+### 1ф ["src/client/screens.js"]
+'进度分布'
+### 1ф ["src/client/screens.js"]
+'负责人负载'
+### 1ф ["src/client/screens.js"]
+'需要马上处理'
+### 1ф ["src/client/screens.js"]
+`${attention.length} 个`
+### 1ф ["src/client/screens.js"]
+'当前没有需要升级处理的项目。'
+### 1ф ["src/client/screens.js"]
+`${dueSoon.length} 个`
+### 2ф ["src/client/screens.js","test/aiplan.test.js"]
+'本周没有到期的项目。'
+### 1ф ["src/client/ui.js"]
+`进度 ${percent}%`
+### 1ф ["src/client/ui.js"]
+'关闭详情'
+### 1ф ["src/client/ui.js"]
+'清空搜索'
+### 1ф ["src/shared/aiplan.js"]
+'名称'
+### 1ф ["src/shared/aiplan.js"]
+'链接'
+### 1ф ["src/shared/aiplan.js"]
+'下'
+### 1ф ["src/shared/aiplan.js"]
+"'《》()（）\[\]【】]/g, '').toLowerCase()
+
+/** 按 id → 完全同名 → 包含 的顺序找项目；歧义或找不到都返回原因。 */
+export function matchProject(target, projects) {
+  const raw = String(target ?? '').trim()
+  if (raw === '') return { reason: '没有指明是哪个项目' }
+  const list = Array.isArray(projects) ? projects : []
+  const byId = list.find((project) => project.id === raw)
+  if (byId) return { project: byId }
+  const wanted = normalizeName(raw)
+  const exact = list.filter((project) => normalizeName(project.name) === wanted)
+  if (exact.length === 1) return { project: exact[0] }
+  if (exact.length > 1) return { reason: `「${raw}」对应多个项目，请说全一点` }
+  const partial = list.filter((project) => normalizeName(project.name).includes(wanted) || wanted.includes(normalizeName(project.name)))
+  if (partial.length === 1) return { project: partial[0] }
+  if (partial.length > 1) return { reason: `「${raw}」匹配到多个项目（${partial.slice(0, 3).map((p) => p.name).join('、')}），请说全一点` }
+  return { reason: `找不到项目「${raw}」` }
+}
+
+function cleanTags(value) {
+  if (!Array.isArray(value)) return []
+  return value.map((tag) => String(tag ?? '').trim()).filter(Boolean).slice(0, 8)
+}
+
+function cleanProgress(value) {
+  const number = typeof value === 'number' ? value : Number(String(value ?? '').replace('%', '').trim())
+  if (!Number.isFinite(number)) return null
+  return clampProgress({ progress: number })
+}
+
+function normalizeAdd(raw, today, issues) {
+  const name = String(raw?.name ?? raw?.title ?? '').trim()
+  if (!name) {
+    issues.push('新增动作缺少项目名称，已跳过')
+    return null
+  }
+  const status = STATUSES.includes(raw?.status) ? raw.status : '进行中'
+  const progress = cleanProgress(raw?.progress)
+  return {
+    op: 'add',
+    project: {
+      name,
+      module: String(raw?.module ?? '').trim() || '其他项目',
+      status,
+      owner: String(raw?.owner ?? '').trim(),
+      startedOn: resolveDate(raw?.startedOn, today),
+      dueDate: resolveDate(raw?.dueDate, today),
+      progress: progress === null ? 0 : progress,
+      summary: String(raw?.summary ?? '').trim(),
+      link: String(raw?.link ?? '').trim(),
+      tags: cleanTags(raw?.tags)
+    }
+  }
+}
+
+function normalizeUpdate(raw, projects, today, issues) {
+  const found = matchProject(raw?.target ?? raw?.name, projects)
+  if (!found.project) {
+    issues.push(`${found.reason}，修改已跳过`)
+    return null
+  }
+  const source = raw?.changes && typeof raw.changes === 'object' ? raw.changes : raw
+  const changes = {}
+  for (const key of EDITABLE) {
+    if (source?.[key] === undefined || source?.[key] === null || source?.[key] === '') continue
+    if (key === 'progress') {
+      const progress = cleanProgress(source[key])
+      if (progress === null) { issues.push(`进度值无法识别，已忽略`); continue }
+      changes.progress = progress
+      continue
+    }
+    if (key === 'status') {
+      if (!STATUSES.includes(source[key])) { issues.push(`状态「${source[key]}」不在可选范围，已忽略`); continue }
+      changes.status = source[key]
+      continue
+    }
+    if (key === 'dueDate' || key === 'startedOn') {
+      const date = resolveDate(source[key], today)
+      if (!date) { issues.push(`日期「${source[key]}」无法识别，已忽略`); continue }
+      changes[key] = date
+      continue
+    }
+    changes[key] = String(source[key]).trim()
+  }
+  if (Object.keys(changes).length === 0) {
+    issues.push(`没有识别出「${found.project.name}」要改什么，已跳过`)
+    return null
+  }
+  return { op: 'update', projectId: found.project.id, name: found.project.name, changes }
+}
+
+function normalizeSimple(op, raw, projects, today, issues) {
+  const found = matchProject(raw?.target ?? raw?.project ?? raw?.name, projects)
+  if (!found.project) {
+    issues.push(`${found.reason}，${op === 'delete' ? '删除' : op === 'addTodo' ? '新增待跟进' : op === 'doneTodo' ? '完成待跟进' : '追加进展'}已跳过`)
+    return null
+  }
+  const project = found.project
+  if (op === 'delete') return { op, projectId: project.id, name: project.name }
+  if (op === 'addTodo') {
+    const title = String(raw?.title ?? raw?.todo ?? raw?.text ?? '').trim()
+    if (!title) { issues.push('待跟进缺少内容，已跳过'); return null }
+    return { op, projectId: project.id, name: project.name, title, owner: String(raw?.owner ?? '').trim(), dueDate: resolveDate(raw?.dueDate, today) }
+  }
+  if (op === 'doneTodo') {
+    const wanted = normalizeName(raw?.title ?? raw?.todo ?? raw?.text ?? '')
+    const open = (project.todos ?? []).filter((todo) => todo.done !== true)
+    let todo = null
+    if (wanted) todo = open.find((item) => normalizeName(item.title).includes(wanted)) ?? null
+    else if (open.length === 1) todo = open[0]
+    if (!todo) { issues.push(`在「${project.name}」里找不到要完成的待跟进，已跳过`); return null }
+    return { op, projectId: project.id, name: project.name, todoId: todo.id, title: todo.title }
+  }
+  const text = String(raw?.text ?? raw?.content ?? raw?.summary ?? '').trim()
+  if (!text) { issues.push('进展内容为空，已跳过'); return null }
+  const kind = LOG_KINDS.includes(raw?.kind) ? raw.kind : 'note'
+  return { op, projectId: project.id, name: project.name, kind, text }
+}
+
+/**
+ * 校验并收敛模型给的原始计划。
+ * @returns { intent, reply, actions, issues }
+ */
+export function normalizePlan(raw, projects, today = todayISO()) {
+  const issues = []
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
+    return { intent: 'query', reply: '', actions: [], issues: ['模型没有返回可用的计划'] }
+  }
+  const actions = []
+  for (const action of Array.isArray(raw.actions) ? raw.actions.slice(0, 20) : []) {
+    const op = String(action?.op ?? '').trim()
+    if (!AI_OPS.includes(op)) {
+      if (op) issues.push(`不认识的动作「${op}」，已跳过`)
+      continue
+    }
+    const normalized = op === 'add' ? normalizeAdd(action, today, issues)
+      : op === 'update' ? normalizeUpdate(action, projects, today, issues)
+        : normalizeSimple(op, action, projects, today, issues)
+    if (normalized) actions.push(normalized)
+  }
+  const intent = AI_INTENTS.includes(raw.intent) ? raw.intent : ''
+  const inferred = actions.length === 0
+    ? (intent || 'query')
+    : actions.some((action) => action.op === 'add') ? 'add'
+      : actions.some((action) => action.op === 'delete') ? 'delete'
+        : actions.some((action) => action.op === 'update') ? 'update'
+          : actions.some((action) => action.op === 'addTodo' || action.op === 'doneTodo') ? 'todo' : 'log'
+  return {
+    intent: intent && actions.length > 0 && intent !== 'query' ? intent : inferred,
+    reply: String(raw.reply ?? '').trim(),
+    actions,
+    issues
+  }
+}
+
+/** 客户端应用前再核对一次：解析期间项目可能已经变了。 */
+export function revalidatePlan(plan, projects) {
+  const ids = new Set((Array.isArray(projects) ? projects : []).map((project) => project.id))
+  const actions = []
+  const issues = [...(plan?.issues ?? [])]
+  let dropped = 0
+  for (const action of plan?.actions ?? []) {
+    if (action.op === 'add' || ids.has(action.projectId)) actions.push(action)
+    else dropped += 1
+  }
+  if (dropped > 0) issues.push(`有 ${dropped} 项因为项目已变化被跳过`)
+  return { ...plan, actions, issues }
+}
+
+/** 人类可读的变更预览：确认弹窗就是按这个渲染的。 */
+export function previewPlan(plan, projects = [], today = todayISO()) {
+  const find = (id) => projects.find((project) => project.id === id)
+  const groups = []
+  const push = (key, title, lines) => { if (lines.length > 0) groups.push({ key, title, lines }) }
+
+  push('add', '新增项目', (plan.actions ?? []).filter((action) => action.op === 'add').map((action) => {
+    const project = action.project
+    const bits = [project.module, project.status, project.dueDate ? `DDL ${project.dueDate}` : '未排期']
+    if (project.owner) bits.push(project.owner)
+    return `「${project.name}」（${bits.join(' · ')}）${project.summary ? ` — ${project.summary}` : ''}`
+  }))
+
+  push('update', '修改项目', (plan.actions ?? []).filter((action) => action.op === 'update').map((action) => {
+    const project = find(action.projectId)
+    const changes = Object.entries(action.changes).map(([key, value]) => {
+      const before = key === 'progress' ? `${clampProgress(project ?? {})}%` : String(project?.[key] ?? '空') || '空'
+      const after = key === 'progress' ? `${value}%` : String(value)
+      return `${FIELD_LABELS[key] ?? key} ${before} → ${after}`
+    })
+    return `「${action.name}」：${changes.join('；')}`
+  }))
+
+  push('delete', '删除项目', (plan.actions ?? []).filter((action) => action.op === 'delete').map((action) => {
+    const project = find(action.projectId)
+    return `「${action.name}」${project ? `（${project.module || '其他项目'} · ${project.status || '进行中'} · ${clampProgress(project)}%）` : ''}`
+  }))
+
+  push('todo', '待跟进', (plan.actions ?? []).filter((action) => action.op === 'addTodo' || action.op === 'doneTodo').map((action) => (action.op === 'addTodo'
+    ? `给「${action.name}」新增：${action.title}${action.dueDate ? `（截止 ${action.dueDate}）` : ''}`
+    : `把「${action.name}」的「${action.title}」标记完成`)))
+
+  push('log', '进展记录', (plan.actions ?? []).filter((action) => action.op === 'addLog').map((action) =>
+    `给「${action.name}」追加${KIND_LABELS[action.kind] ?? '记录'}：${action.text}`))
+
+  const total = (plan.actions ?? []).length
+  return { groups, total, issues: plan.issues ?? [] }
+}
+
+/** 预览里各项变更的一句话摘要，用于执行后的提示。 */
+export function planSummary(plan) {
+  const count = (op) => (plan.actions ?? []).filter((action) => action.op === op).length
+  const parts = []
+  if (count('add')) parts.push(`新增 ${count('add')} 个`)
+  if (count('update')) parts.push(`修改 ${count('update')} 个`)
+  if (count('delete')) parts.push(`删除 ${count('delete')} 个`)
+  const todos = count('addTodo') + count('doneTodo')
+  if (todos) parts.push(`待跟进 ${todos} 项`)
+  if (count('addLog')) parts.push(`进展 ${count('addLog')} 条`)
+  return parts.join('，') || '没有变更'
+}
+
+/**
+ * 把计划应用到状态上，返回新状态。一次写入，失败不留半成品。
+ * @param makeId - 生成 id 的函数，测试里可以注入固定值。
+ */
+export function applyPlan(state, plan, today = todayISO(), makeId = (prefix) => `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 7)}`) {
+  let projects = Array.isArray(state?.projects) ? [...state.projects] : []
+  let applied = 0
+  const now = new Date().toISOString()
+  const touch = (project) => ({ ...project, updatedAt: now })
+
+  for (const action of plan?.actions ?? []) {
+    if (action.op === 'add') {
+      projects = [{
+        id: makeId('proj'),
+        name: action.project.name,
+        module: action.project.module,
+        status: action.project.status,
+        owner: action.project.owner,
+        dueDate: action.project.dueDate,
+        startedOn: action.project.startedOn,
+        progress: action.project.progress,
+        link: action.project.link,
+        summary: action.project.summary,
+        tags: action.project.tags,
+        createdAt: now,
+        updatedAt: now,
+        updates: [],
+        todos: []
+      }, ...projects]
+      applied += 1
+      continue
+    }
+    const index = projects.findIndex((project) => project.id === action.projectId)
+    if (index < 0) continue
+    const project = projects[index]
+    if (action.op === 'update') {
+      projects[index] = touch({ ...project, ...action.changes })
+    } else if (action.op === 'delete') {
+      projects = projects.filter((item) => item.id !== action.projectId)
+    } else if (action.op === 'addTodo') {
+      projects[index] = touch({
+        ...project,
+        todos: [...(project.todos ?? []), {
+          id: makeId('todo'), title: action.title, owner: action.owner, dueDate: action.dueDate, done: false, doneAt: ''
+        }]
+      })
+    } else if (action.op === 'doneTodo') {
+      projects[index] = touch({
+        ...project,
+        todos: (project.todos ?? []).map((todo) => (todo.id === action.todoId
+          ? { ...todo, done: true, doneAt: now }
+          : todo))
+      })
+    } else if (action.op === 'addLog') {
+      projects[index] = touch({
+        ...project,
+        updates: [...(project.updates ?? []), { id: makeId('upd'), at: now, kind: action.kind, text: action.text }]
+      })
+    }
+    applied += 1
+  }
+  return { next: { ...state, projects }, applied }
+}
+
+/* --------------------------------------------------------- 本地规则兜底 */
+
+const has = (text, pattern) => pattern.test(text)
+
+function pickProjectName(instruction, projects) {
+  const normalized = normalizeName(instruction)
+  const candidates = (projects ?? [])
+    .map((project) => ({ project, key: normalizeName(project.name) }))
+    .filter((item) => item.key.length >= 2 && normalized.includes(item.key))
+    .sort((a, b) => b.key.length - a.key.length)
+  return candidates[0]?.project ?? null
+}
+
+function detectStatus(text) {
+  if (/已完成|做完了|交付了/.test(text)) return '已完成'
+  if (/阻塞|卡住|卡在/.test(text)) return '阻塞'
+  if (/暂停|搁置/.test(text)) return '暂停'
+  if (/待启动|还没开始|未开始/.test(text)) return '待启动'
+  if (/进行中|在做/.test(text)) return '进行中'
+  return ''
+}
+
+/**
+ * 不依赖模型的规则解析：识别常见说法，产出的计划结构与模型一致。
+ * 模型不可用时用它兜底，UI 会标注来源。
+ */
+export function planFromRules(instruction, projects = [], today = todayISO()) {
+  const text = String(instruction ?? '').trim()
+  const issues = []
+  if (!text) return { intent: 'query', reply: '先说一句要做什么，比如「把订单结算服务重构的 DDL 改到下周五」。', actions: [], issues }
+
+  if (has(text, /哪些|多少|列出|查一下|查询|有没有|怎么样|如何|情况|吗[?？]?$|[?？]$/)) {
+    return { intent: 'query', reply: answerQuestion(text, projects, today).text, actions: [], issues }
+  }
+
+  const target = pickProjectName(text, projects)
+
+  if (has(text, /删除|删掉|移除|去掉|不要了/)) {
+    if (!target) {
+      issues.push('没听出要删哪个项目，请把项目名说清楚')
+      return { intent: 'delete', reply: '', actions: [], issues }
+    }
+    return { intent: 'delete', reply: `删除「${target.name}」`, actions: [{ op: 'delete', projectId: target.id, name: target.name }], issues }
+  }
+
+  if (has(text, /待跟进|待办|提醒|跟进事项/)) {
+    if (!target) {
+      issues.push('没听出是哪个项目的待跟进，请把项目名说清楚')
+      return { intent: 'todo', reply: '', actions: [], issues }
+    }
+    const title = text
+      .replace(/^(给|帮我把|帮我|在)?\s*/, '')
+      .split(/待跟进|待办|提醒我?|跟进事项/)[1] ?? ''
+    const cleaned = title.replace(/^[:：,，、\s]+/, '').replace(/[。.\s]+$/, '').trim()
+    if (!cleaned) {
+      issues.push('没说清待跟进的内容')
+      return { intent: 'todo', reply: '', actions: [], issues }
+    }
+    return {
+      intent: 'todo',
+      reply: `给「${target.name}」加一条待跟进`,
+      actions: [{ op: 'addTodo', projectId: target.id, name: target.name, title: cleaned, owner: '', dueDate: resolveDate(text, today) }],
+      issues
+    }
+  }
+
+  if (has(text, /完成|勾掉|做完了|搞定了/) && target) {
+    const open = (target.todos ?? []).filter((todo) => todo.done !== true)
+    if (open.length === 1) {
+      return { intent: 'todo', reply: `把「${target.name}」的待跟进标记完成`, actions: [{ op: 'doneTodo', projectId: target.id, name: target.name, todoId: open[0].id, title: open[0].title }], issues }
+    }
+    if (open.length === 0) issues.push(`「${target.name}」没有未完成的待跟进`)
+    else issues.push(`「${target.name}」有 ${open.length} 条未完成待跟进，请说清是哪一条`)
+    return { intent: 'todo', reply: '', actions: [], issues }
+  }
+
+  if (has(text, /进展|记录一条|追加|记一下|备注/)) {
+    if (!target) {
+      issues.push('没听出是哪个项目，请把项目名说清楚')
+      return { intent: 'log', reply: '', actions: [], issues }
+    }
+    const body = text.split(/进展|记录一条|追加|记一下|备注/)[1] ?? ''
+    const cleaned = body.replace(/^[:：,，、\s]+/, '').replace(/[。.\s]+$/, '').trim()
+    if (!cleaned) {
+      issues.push('没说清要记什么')
+      return { intent: 'log', reply: '', actions: [], issues }
+    }
+    const kind = /阻塞|卡住/.test(cleaned) ? 'blocker' : /决定|拍板/.test(cleaned) ? 'decision' : /完成|搞定/.test(cleaned) ? 'progress' : 'note'
+    return { intent: 'log', reply: `给「${target.name}」追加一条记录`, actions: [{ op: 'addLog', projectId: target.id, name: target.name, kind, text: cleaned }], issues }
+  }
+
+  const progress = /(\d{1,3})\s*%/.exec(text)
+  const status = detectStatus(text)
+  const dueDate = has(text, /ddl|截止|到期|交付|deadline|推迟|提前|延后|改到|改为.*[日号天周]/i) || /月.*[日号]/.test(text)
+    ? resolveDate(text, today)
+    : ''
+  const owner = /负责人\s*[:：]?\s*([^\s,，。；;]{1,12})/.exec(text)?.[1] ?? ''
+
+  if (target && (progress || status || dueDate || owner)) {
+    const changes = {}
+    if (progress) changes.progress = clampProgress({ progress: Number(progress[1]) })
+    if (status) changes.status = status
+    if (dueDate) changes.dueDate = dueDate
+    if (owner) changes.owner = owner
+    return { intent: 'update', reply: `修改「${target.name}」`, actions: [{ op: 'update', projectId: target.id, name: target.name, changes }], issues }
+  }
+
+  if (has(text, /新增|添加|加一个|建一个|创建一个|录入|记一个新项目/)) {
+    const module = MODULES.find((name) => text.includes(name)) ?? '其他项目'
+    const name = text
+      .replace(/^(帮我|请|麻烦)?\s*(新增|添加|新建|创建|录入)?\s*(一个|一条|个)?\s*(项目)?\s*[:：]?\s*/, '')
+      .split(/[，,。；;]|（|\(/)[0]
+      .replace(new RegExp(module, 'g'), '')
+      .replace(/放到|归到|属于|在/g, '')
+      .trim()
+    if (!name) {
+      issues.push('没听出项目名称')
+      return { intent: 'add', reply: '', actions: [], issues }
+    }
+    return {
+      intent: 'add',
+      reply: `新增项目「${name}」`,
+      actions: [{
+        op: 'add',
+        project: {
+          name, module, status: status || '进行中', owner,
+          startedOn: today, dueDate, progress: progress ? clampProgress({ progress: Number(progress[1]) }) : 0,
+          summary: '', link: '', tags: []
+        }
+      }],
+      issues
+    }
+  }
+
+  issues.push('没看懂这句话。可以说「新增一个项目叫 X」「把 X 的 DDL 改到下周五」「删掉 X」「给 X 加一条待跟进：Y」，或者直接问「这周要交付什么」。')
+  return { intent: 'query', reply: answerQuestion(text, projects, today).text, actions: [], issues }
+}
+
+/** 给模型的 JSON 约定说明（也用于界面上的能力提示）。 */
+export function planSchemaDoc(today = todayISO()) {
+  return [
+    `今天是 ${today}。把用户的指令翻译成一个 JSON 对象，不要输出任何解释或 Markdown 代码块之外的文字。`,
+    'JSON 结构：{ "
+### 1ф ["src/shared/aiplan.js"]
+": [...] }',
+    'actions 里每一项是下列之一：',
+    '- 新增项目：{ "
+### 1ф ["src/shared/aiplan.js"]
+"] }',
+    '- 修改项目：{ "
+### 1ф ["src/shared/aiplan.js"]
+":{ 只写要改的字段，字段名同上 } }',
+    '- 删除项目：{ "
+### 1ф ["src/shared/aiplan.js"]
+" }',
+    '- 新增待跟进：{ "
+### 1ф ["src/shared/aiplan.js"]
+" }',
+    '- 完成待跟进：{ "
+### 1ф ["src/shared/aiplan.js"]
+" }',
+    '- 追加进展：{ "
+### 1ф ["src/shared/aiplan.js"]
+" }',
+    '规则：只能引用上面给出的真实项目名或 id；只问不做时 intent 用 "
+### 1ф ["src/shared/aiplan.js"]
+"、actions 留空、reply 给答案；',
+    '日期一律换成 YYYY-MM-DD；不确定的字段不要编造，宁可少写一个 action。'
+  ].join('\n')
+}
+
+/** 给模型看的项目快照（限长，避免把上下文撑爆）。 */
+export function projectSnapshot(projects, today = todayISO(), limit = 40) {
+  return (Array.isArray(projects) ? projects : []).slice(0, limit).map((project) => ({
+    id: project.id,
+    name: project.name,
+    module: project.module || '其他项目',
+    status: project.status || '进行中',
+    owner: project.owner || '',
+    dueDate: project.dueDate || '',
+    progress: clampProgress(project),
+    todo: (project.todos ?? []).filter((todo) => todo.done !== true).slice(0, 8).map((todo) => ({ title: todo.title, dueDate: todo.dueDate || '' })),
+    lastUpdate: (project.updates ?? []).slice(-2).map((item) => item.text)
+  }))
+}
+
+### 11ф ["src/shared/analysis.js","src/shared/sample.js","test/aiplan.test.js","test/analysis.test.js","test/client-bundle.test.js","test/insights.test.js","test/prompt.test.js","test/query.test.js","test/server.test.js","test/store.test.js","test/views.test.js"]
+'公司项目'
+### 9ф ["src/shared/analysis.js","src/shared/sample.js","test/aiplan.test.js","test/analysis.test.js","test/client-bundle.test.js","test/insights.test.js","test/query.test.js","test/sample.test.js","test/views.test.js"]
+'日常工作'
+### 3ф ["src/shared/analysis.js","src/shared/sample.js","test/insights.test.js"]
+'待启动'
+### 8ф ["src/shared/analysis.js","src/shared/sample.js","src/shared/views.js","test/analysis.test.js","test/client-bundle.test.js","test/insights.test.js","test/query.test.js","test/views.test.js"]
+'已完成'
+### 2ф ["src/shared/analysis.js","test/insights.test.js"]
+'暂停'
+### 3ф ["src/shared/analysis.js","src/shared/insights.js","src/shared/views.js"]
+'已逾期'
+### 1ф ["src/shared/analysis.js"]
+'紧急'
+### 1ф ["src/shared/analysis.js"]
+'进度风险'
+### 1ф ["src/shared/analysis.js"]
+'临近'
+### 1ф ["src/shared/analysis.js"]
+`已逾期 ${Math.abs(left)} 天`
+### 3ф ["src/shared/analysis.js","src/shared/insights.js","test/analysis.test.js"]
+'今天到期'
+### 2ф ["src/shared/analysis.js","test/analysis.test.js"]
+'明天到期'
+### 1ф ["src/shared/analysis.js"]
+`还剩 ${left} 天`
+### 1ф ["src/shared/analysis.js"]
+'已交付'
+### 1ф ["src/shared/analysis.js"]
+'处于阻塞状态，需要推动'
+### 1ф ["src/shared/analysis.js"]
+'未设置截止日期'
+### 1ф ["src/shared/analysis.js"]
+`已超过截止日期 ${Math.abs(left)} 天`
+### 1ф ["src/shared/analysis.js"]
+`只剩 ${left} 天`
+### 1ф ["src/shared/analysis.js"]
+`时间已过 ${percent}% 但进度只有 ${clampProgress(project)}%`
+### 1ф ["src/shared/analysis.js"]
+`还剩 ${left} 天，节奏正常`
+### 1ф ["src/shared/insights.js"]
+`${match[1]} 年 ${Number(match[2])} 月`
+### 1ф ["src/shared/insights.js"]
+'本周内'
+### 1ф ["src/shared/insights.js"]
+'更晚'
+### 1ф ["src/shared/insights.js"]
+`${data.total} 个项目里 ${data.overdue} 个已逾期、${data.danger} 个需要马上处理，先看「需关注」这一列。`
+### 1ф ["src/shared/insights.js"]
+`${data.total} 个项目整体在跑，${data.attention} 个需要盯一下，本周到期 ${data.weekDue} 个。`
+### 1ф ["src/shared/insights.js"]
+`${data.total} 个项目节奏正常，平均进度 ${data.avgProgress}%，没有逾期项。`
+### 1ф ["src/shared/prompt.js"]
+'（暂无）'
+### 1ф ["src/shared/prompt.js"]
+`### ${project?.name ?? '未命名项目'}`
+### 1ф ["src/shared/prompt.js"]
+`- 模块：${project?.module || '其他项目'}`
+### 1ф ["src/shared/prompt.js"]
+`- 状态：${project?.status || '进行中'}`
+### 1ф ["src/shared/prompt.js"]
+`- 进度：${clampProgress(project)}%`
+### 1ф ["src/shared/prompt.js"]
+`- 负责人：${project?.owner || '未指定'}`
+### 1ф ["src/shared/prompt.js"]
+`- 起止：${project?.startedOn || '未填'} → ${project?.dueDate || '未排期'}（${formatRemaining(project?.dueDate, today)}）`
+### 1ф ["src/shared/prompt.js"]
+`- 时间风险：${risk.label} — ${risk.detail}`
+### 1ф ["src/shared/prompt.js"]
+`- 链接：${project.link}`
+### 1ф ["src/shared/prompt.js"]
+`- 一句话说明：${project.summary}`
+### 1ф ["src/shared/prompt.js"]
+`- 标签：${project.tags.join('、')}`
+### 1ф ["src/shared/prompt.js"]
+`**进展记录（新→旧，共 ${updates.length} 条）**`
+### 1ф ["src/shared/prompt.js"]
+`${String(item.at).slice(0, 10)} [${KIND_LABELS[item.kind] ?? '记录'}] ${item.text}`
+### 1ф ["src/shared/prompt.js"]
+`**未完成待跟进（${todos.length} 项）**`
+### 1ф ["src/shared/prompt.js"]
+`${todo.title}${todo.dueDate ? `（截止 ${todo.dueDate}）` : ''}${todo.owner ? ` — ${todo.owner}` : ''}`
+### 1ф ["src/shared/prompt.js"]
+`**已完成待跟进（${doneTodos.length} 项）**`
+### 1ф ["src/shared/prompt.js"]
+'（工作台里还没有项目）'
+### 1ф ["src/shared/prompt.js"]
+`- ${item.module}：${item.total} 个（进行中 ${item.active}、危险 ${item.danger}、待跟进 ${item.openTodos}）`
+### 1ф ["src/shared/prompt.js"]
+`- 项目总数：${data.total}`
+### 1ф ["src/shared/prompt.js"]
+`- 状态分布：${Object.entries(data.byStatus).map(([key, value]) => `${key} ${value}`).join('、') || '无'}`
+### 1ф ["src/shared/prompt.js"]
+`- 风险分布：${Object.entries(data.byRisk).map(([key, value]) => `${key} ${value}`).join('、') || '无'}`
+### 1ф ["src/shared/prompt.js"]
+'- 按模块：'
+### 1ф ["src/shared/prompt.js"]
+'下面这一个项目'
+### 1ф ["src/shared/prompt.js"]
+'下面这些项目'
+### 1ф ["src/shared/prompt.js"]
+`你是我的项目推进助理。今天是 ${today}。`
+### 1ф ["src/shared/prompt.js"]
+`请基于${scope}的登记数据做一次进展分析，不要编造数据里没有的事实；信息不足时明确说「数据不足」。`
+### 1ф ["src/shared/prompt.js"]
+'请按这个结构输出：'
+### 1ф ["src/shared/prompt.js"]
+'1. 当前状态判断：哪些在正轨、哪些已经偏了，用一两句话给结论。'
+### 1ф ["src/shared/prompt.js"]
+'2. 时间风险：逐个说明剩余时间与进度的匹配情况，标出最可能来不及的项目和判断依据。'
+### 1ф ["src/shared/prompt.js"]
+'3. 阻塞与依赖：从进展记录里找出被人或外部条件卡住的点。'
+### 1ф ["src/shared/prompt.js"]
+'4. 下一步动作：给我 3-5 条具体、可执行的动作，每条写明针对哪个项目、建议完成时间。'
+### 1ф ["src/shared/prompt.js"]
+'5. 需要我补充的信息：列出你判断时需要但我没登记的内容。'
+### 1ф ["src/shared/prompt.js"]
+'周报'
+### 1ф ["src/shared/prompt.js"]
+'项目状态汇报'
+### 1ф ["src/shared/prompt.js"]
+'风险清单'
+### 1ф ["src/shared/prompt.js"]
+'会议纪要骨架'
+### 1ф ["src/shared/prompt.js"]
+`| ${item.project.name} | ${item.project.module || '其他项目'} | ${item.project.status || '进行中'} | ${clampProgress(item.project)}% | ${item.project.dueDate || '未排期'} | ${risk.label} — ${risk.detail} | ${todo.length} |`
+### 1ф ["src/shared/prompt.js"]
+`# 风险清单 · ${title}`
+### 1ф ["src/shared/prompt.js"]
+`生成时间：${today}`
+### 1ф ["src/shared/prompt.js"]
+'| 项目 | 模块 | 状态 | 进度 | 截止 | 风险 | 待跟进 |'
+### 1ф ["src/shared/prompt.js"]
+'| （暂无项目） |  |  |  |  |  |  |'
+### 1ф ["src/shared/prompt.js"]
+'## 处理建议'
+### 1ф ["src/shared/prompt.js"]
+`${item.project.name}：${item.risk.detail}，建议先确认责任人并给出新的交付时间。`
+### 1ф ["src/shared/prompt.js"]
+'（当前没有需要升级处理的风险）'
+### 1ф ["src/shared/prompt.js"]
+`# 周报 · 项目推进（${today}）`
+### 1ф ["src/shared/prompt.js"]
+'## 一、整体情况'
+### 1ф ["src/shared/prompt.js"]
+'## 二、本周进展'
+### 1ф ["src/shared/prompt.js"]
+'## 三、下周计划'
+### 1ф ["src/shared/prompt.js"]
+`${item.name}：${todo.title}${todo.dueDate ? `（${todo.dueDate} 前）` : ''}`
+### 1ф ["src/shared/prompt.js"]
+'（待跟进清单为空，请补充下周计划）'
+### 1ф ["src/shared/prompt.js"]
+'## 四、需要协调'
+### 1ф ["src/shared/prompt.js"]
+`${item.project.name}：${item.risk.detail}`
+### 1ф ["src/shared/prompt.js"]
+`# 会议纪要 · ${title}（${today}）`
+### 1ф ["src/shared/prompt.js"]
+'参加会议：'
+### 1ф ["src/shared/prompt.js"]
+'## 一、项目现状'
+### 1ф ["src/shared/prompt.js"]
+'## 二、讨论与结论'
+### 1ф ["src/shared/prompt.js"]
+'- （待补充）'
+### 1ф ["src/shared/prompt.js"]
+'## 三、行动项'
+### 1ф ["src/shared/prompt.js"]
+'| 事项 | 负责人 | 截止 | 状态 |'
+### 1ф ["src/shared/prompt.js"]
+`| ${item.name}：${todo.title} | ${todo.owner || '待定'} | ${todo.dueDate || '待定'} | 未开始 |`
+### 1ф ["src/shared/prompt.js"]
+'| （待补充） |  |  |  |'
+### 1ф ["src/shared/prompt.js"]
+`- 模块／状态：${item.project.module || '其他项目'}／${item.project.status || '进行中'}`
+### 1ф ["src/shared/prompt.js"]
+`- 进度：${clampProgress(item.project)}%，${formatRemaining(item.project.dueDate, today)}`
+### 1ф ["src/shared/prompt.js"]
+`- 时间风险：${item.risk.label} — ${item.risk.detail}`
+### 1ф ["src/shared/prompt.js"]
+`- 最近进展：${latest ? `${String(latest.at).slice(0, 10)} ${latest.text}` : '无记录'}`
+### 1ф ["src/shared/prompt.js"]
+`- 下一步：${openTodos(item.project).map((todo) => todo.title).slice(0, 3).join('；') || '待补充'}`
+### 1ф ["src/shared/prompt.js"]
+`# 项目状态汇报 · ${title}（${today}）`
+### 1ф ["src/shared/prompt.js"]
+'## 概要'
+### 1ф ["src/shared/prompt.js"]
+'## 项目明细'
+### 1ф ["src/shared/prompt.js"]
+'（暂无项目）'
+### 1ф ["src/shared/prompt.js"]
+`已生成「${DOC_KINDS[kind] ?? '文档'}」草稿：可以直接复制到旁边的会话里让 Agent 补全，也可以下载成 Markdown。`
+### 1ф ["src/shared/query.js"]
+`· ${project.name}（${project.module || '其他项目'}｜${project.status || '进行中'}｜${formatRemaining(project.dueDate, risk.today)}）${risk.detail ? ` — ${risk.detail}` : ''}`
+### 1ф ["src/shared/query.js"]
+`${title}：没有符合条件的项目。`
+### 1ф ["src/shared/query.js"]
+`${title}（${count} 个）`
+### 1ф ["src/shared/query.js"]
+'当前没有需要重点关注的项目，所有项目的 DDL 和进度都正常。'
+### 1ф ["src/shared/query.js"]
+`${header('需要关注的项目', risky.length)}\n${body}`
+### 1ф ["src/shared/query.js"]
+`${label}：没有到期的项目。`
+### 1ф ["src/shared/query.js"]
+'待跟进清单是空的。'
+### 1ф ["src/shared/query.js"]
+`· [${todo.done ? 'x' : ' '}] ${todo.title}｜${project.name}${todo.dueDate ? `｜截止 ${todo.dueDate}` : ''}${todo.owner ? `｜${todo.owner}` : ''}`
+### 1ф ["src/shared/query.js"]
+`${header('待跟进事项', items.length)}\n${body}`
+### 1ф ["src/shared/query.js"]
+`${project.name}（${project.module || '其他项目'}）`
+### 1ф ["src/shared/query.js"]
+`状态：${project.status || '进行中'}｜进度：${clampProgress(project)}%｜${formatRemaining(project.dueDate, today)}`
+### 1ф ["src/shared/query.js"]
+`风险：${risk.label} — ${risk.detail}`
+### 1ф ["src/shared/query.js"]
+`负责人：${project.owner}`
+### 1ф ["src/shared/query.js"]
+`说明：${project.summary}`
+### 1ф ["src/shared/query.js"]
+`最近进展（${String(latest.at).slice(0, 10)}）：${latest.text}`
+### 1ф ["src/shared/query.js"]
+'还没有进展记录'
+### 1ф ["src/shared/query.js"]
+`待跟进 ${todos.length} 项：${todos.slice(0, 5).map((todo) => todo.title).join('、')}`
+### 1ф ["src/shared/query.js"]
+'没有未完成的待跟进事项'
+### 1ф ["src/shared/query.js"]
+'工作台里还没有项目。点右上角「新建项目」开始登记。'
+### 1ф ["src/shared/query.js"]
+`· ${item.module}：${item.total} 个｜进行中 ${item.active}｜危险 ${item.danger}｜待跟进 ${item.openTodos}`
+### 1ф ["src/shared/query.js"]
+`共 ${data.total} 个项目：${Object.entries(data.byStatus).map(([key, value]) => `${key} ${value}`).join('、')}`
+### 1ф ["src/shared/query.js"]
+`\n按模块：\n${moduleLines}`
+### 1ф ["src/shared/query.js"]
+`\n需关注 ${data.attention.filter((item) => RISKY.includes(item.risk.level)).length} 个，逾期 ${data.byRisk.overdue ?? 0} 个。`
+### 1ф ["src/shared/query.js"]
+`\n最优先：\n${danger.map((item) => line(item.project, { ...item.risk, today })).join('\n')}`
+### 1ф ["src/shared/query.js"]
+'问一句比如：哪些项目这周到期？有什么风险？我的待跟进还有哪些？'
+### 1ф ["src/shared/query.js"]
+'工作台里还没有项目，先登记几个项目我再帮你盯。'
+### 1ф ["src/shared/query.js"]
+'已逾期的项目'
+### 2ф ["src/shared/query.js","test/query.test.js"]
+'今天到期的项目'
+### 1ф ["src/shared/query.js"]
+'明天到期的项目'
+### 1ф ["src/shared/query.js"]
+`本周（到 ${end}）到期的项目`
+### 1ф ["src/shared/query.js"]
+`${month} 内到期的项目`
+### 1ф ["src/shared/query.js"]
+'没有处于阻塞状态的项目。'
+### 1ф ["src/shared/query.js"]
+`${header('阻塞的项目', blocked.length)}\n${blocked.map((project) => projectLine(project, today).text).join('\n')}`
+### 1ф ["src/shared/query.js"]
+`没看懂「${raw}」，先给你当前最需要关注的项目。也可以直接说项目名，或问：本周到期、逾期、待跟进、阻塞、概览。\n${risk.text}`
+### 1ф ["src/shared/query.js"]
+'哪些项目这周到期？'
+### 2ф ["src/shared/query.js","test/query.test.js"]
+'有什么风险？'
+### 2ф ["src/shared/query.js","test/query.test.js"]
+'我的待跟进还有哪些？'
+### 2ф ["src/shared/query.js","test/query.test.js"]
+'整体情况怎么样？'
+### 8ф ["src/shared/sample.js","test/aiplan.test.js","test/analysis.test.js","test/client-bundle.test.js","test/insights.test.js","test/prompt.test.js","test/query.test.js","test/views.test.js"]
+'我'
+### 2ф ["src/shared/sample.js","test/sample.test.js"]
+'示例'
+### 3ф ["src/shared/sample.js","test/aiplan.test.js","test/server.test.js"]
+'订单结算服务重构'
+### 1ф ["src/shared/sample.js"]
+'把结算逻辑从单体拆成独立服务，接口按领域重划，历史数据要能对得上。'
+### 3ф ["src/shared/sample.js","test/aiplan.test.js","test/prompt.test.js"]
+'后端'
+### 1ф ["src/shared/sample.js"]
+'重构'
+### 1ф ["src/shared/sample.js"]
+'结算链路拆出独立服务，主干联调通过'
+### 1ф ["src/shared/sample.js"]
+'旧系统遗留的优惠券口径没确认，验收用例写不下去'
+### 1ф ["src/shared/sample.js"]
+'补齐结算接口的契约测试'
+### 1ф ["src/shared/sample.js"]
+'和财务确认历史订单的结算口径'
+### 2ф ["src/shared/sample.js","test/aiplan.test.js"]
+'数据中台订单域接入'
+### 1ф ["src/shared/sample.js"]
+'把订单库的增量变更实时打进数据中台，先跑通订单域的一张宽表。'
+### 1ф ["src/shared/sample.js"]
+'数据'
+### 1ф ["src/shared/sample.js"]
+'订单域字段映射表确认，CDC 链路本地跑通'
+### 1ф ["src/shared/sample.js"]
+'联调订单域增量同步，核对 24 小时延迟'
+### 1ф ["src/shared/sample.js"]
+'移动端首屏性能优化'
+### 1ф ["src/shared/sample.js"]
+'首屏从 1.8s 压到 1s 以内：拆包、图片按需、接口并行。'
+### 1ф ["src/shared/sample.js"]
+'前端'
+### 2ф ["src/shared/sample.js","test/sample.test.js"]
+'性能'
+### 1ф ["src/shared/sample.js"]
+'首屏耗时采样完成，定位到主包过大和串行请求'
+### 1ф ["src/shared/sample.js"]
+'拆首屏 JS 分包，砍掉未用依赖'
+### 1ф ["src/shared/sample.js"]
+'灰度发布平台上线'
+### 1ф ["src/shared/sample.js"]
+'按用户维度灰度的发布平台，已接入全部核心服务。'
+### 1ф ["src/shared/sample.js"]
+'平台'
+### 1ф ["src/shared/sample.js"]
+'全量发布完成，回滚预案与值班流程已归档'
+### 1ф ["src/shared/sample.js"]
+'内部分享《线上问题定位实战》准备'
+### 1ф ["src/shared/sample.js"]
+'下周四内部分享，用三个真实 case 讲排查思路：从火焰图到链路日志。'
+### 1ф ["src/shared/sample.js"]
+'技术分享'
+### 1ф ["src/shared/sample.js"]
+'可观测'
+### 1ф ["src/shared/sample.js"]
+'大纲和两个 case 定了，还差一个内存泄漏的分析过程'
+### 1ф ["src/shared/sample.js"]
+'补第三个 case 的火焰图与结论'
+### 1ф ["src/shared/sample.js"]
+'对着同事预讲一遍，控制在 40 分钟'
+### 2ф ["src/shared/sample.js","test/aiplan.test.js"]
+'Q3 技术季度汇报'
+### 1ф ["src/shared/sample.js"]
+'向主管汇报本季度技术产出：稳定性、性能、效率三块指标与下季规划。'
+### 1ф ["src/shared/sample.js"]
+'汇报'
+### 1ф ["src/shared/sample.js"]
+'稳定性与性能两块指标已收集完，等效率部分的埋点数据'
+### 1ф ["src/shared/sample.js"]
+'补性能优化前后的对比数据与图表'
+### 1ф ["src/shared/sample.js"]
+'线上告警值班与故障复盘'
+### 1ф ["src/shared/sample.js"]
+'本周告警值班：处理 P2 告警、写复盘、把结论沉淀进值班手册。'
+### 1ф ["src/shared/sample.js"]
+'值班'
+### 1ф ["src/shared/sample.js"]
+'稳定性'
+### 1ф ["src/shared/sample.js"]
+'两次 P2 告警的复盘初稿写完，等负责人确认根因'
+### 1ф ["src/shared/sample.js"]
+'把复盘结论同步进值班手册和监控规则'
+### 1ф ["src/shared/sample.js"]
+'依赖升级与技术债清理'
+### 1ф ["src/shared/sample.js"]
+'把几个高危依赖升到安全版本，顺手删掉两次迭代前留下的兼容代码。'
+### 1ф ["src/shared/sample.js"]
+'技术债'
+### 2ф ["src/shared/sample.js","test/sample.test.js"]
+'依赖'
+### 1ф ["src/shared/sample.js"]
+'扫出 3 个高危依赖和 1 处废弃兼容层，升级分支已建'
+### 1ф ["src/shared/sample.js"]
+'升级并跑通全量回归'
+### 1ф ["src/shared/sample.js"]
+'自研服务监控小工具'
+### 1ф ["src/shared/sample.js"]
+'自己写个小工具盯接口 P99 与慢 SQL，异常时推到企业微信。'
+### 2ф ["src/shared/sample.js","test/aiplan.test.js"]
+'工具'
+### 1ф ["src/shared/sample.js"]
+'等运维开采集端的只读权限，本地只能用假数据跑'
+### 1ф ["src/shared/sample.js"]
+'确认采集端权限范围与账号'
+### 1ф ["src/shared/sample.js"]
+'运维'
+### 1ф ["src/shared/sample.js"]
+'开源项目 issue 与 PR 维护'
+### 1ф ["src/shared/sample.js"]
+'维护自己那个小开源库：回 issue、审 PR、发一个小版本。'
+### 2ф ["src/shared/sample.js","test/sample.test.js"]
+'开源'
+### 1ф ["src/shared/sample.js"]
+'社区'
+### 1ф ["src/shared/sample.js"]
+'合并了两个社区 PR，CI 全绿'
+### 1ф ["src/shared/sample.js"]
+'回复剩下的 6 个 issue 并打标签'
+### 1ф ["src/shared/sample.js"]
+'技术笔记与博客整理'
+### 1ф ["src/shared/sample.js"]
+'把散在各处的排查笔记和源码阅读记录整理成可检索的博客。'
+### 1ф ["src/shared/sample.js"]
+'学习'
+### 1ф ["src/shared/sample.js"]
+'写作'
+### 1ф ["src/shared/sample.js"]
+'先按主题分了 6 类：并发、存储、网络、JVM、框架源码、排查'
+### 1ф ["src/shared/sample.js"]
+'整理「分布式事务」一节并画流程图'
+### 1ф ["src/shared/sample.js"]
+'副业小程序原型'
+### 1ф ["src/shared/sample.js"]
+'先用两周做个能跑通的最小闭环，验证一下这个想法值不值得继续。'
+### 1ф ["src/shared/sample.js"]
+'副业'
+### 1ф ["src/shared/sample.js"]
+'原型'
+### 1ф ["src/shared/sample.js"]
+'写一页验证目标与技术选型'
+### 1ф ["src/shared/sample.js"]
+`${name} ${count} 个`
+### 1ф ["src/shared/sample.js"]
+`${projects.length} 个示例项目（${detail}）`
+### 1ф ["src/shared/views.js"]
+'逾期、阻塞、紧急或进度落后的项目'
+### 1ф ["src/shared/views.js"]
+'已超过截止日期'
+### 1ф ["src/shared/views.js"]
+'本周日之前到期'
+### 1ф ["src/shared/views.js"]
+'有待跟进'
+### 1ф ["src/shared/views.js"]
+'还有未完成的待跟进事项'
+### 1ф ["src/shared/views.js"]
+'已交付的项目'
+### 1ф ["test/aiplan.test.js"]
+'把结算逻辑拆成独立服务'
+### 1ф ["test/aiplan.test.js"]
+'补齐契约测试'
+### 1ф ["test/aiplan.test.js"]
+'导出常量覆盖六种意图与六种动作'
+### 1ф ["test/aiplan.test.js"]
+'resolveDate 解析绝对日期与常见相对说法'
+### 1ф ["test/aiplan.test.js"]
+'明天'
+### 1ф ["test/aiplan.test.js"]
+'后天'
+### 1ф ["test/aiplan.test.js"]
+'下周五'
+### 1ф ["test/aiplan.test.js"]
+'本周五'
+### 1ф ["test/aiplan.test.js"]
+'月底'
+### 1ф ["test/aiplan.test.js"]
+'11月3号'
+### 1ф ["test/aiplan.test.js"]
+'+3天'
+### 1ф ["test/aiplan.test.js"]
+'随便写的'
+### 1ф ["test/aiplan.test.js"]
+'matchProject 支持 id、全名、包含与歧义检测'
+### 1ф ["test/aiplan.test.js"]
+'订单结算'
+### 1ф ["test/aiplan.test.js"]
+'不存在的项目'
+### 1ф ["test/aiplan.test.js"]
+'订单'
+### 1ф ["test/aiplan.test.js"]
+'订单导出'
+### 1ф ["test/aiplan.test.js"]
+'normalizePlan 丢弃无法匹配的项目并记录原因'
+### 1ф ["test/aiplan.test.js"]
+'改一下'
+### 1ф ["test/aiplan.test.js"]
+'压根不存在的项目'
+### 1ф ["test/aiplan.test.js"]
+'normalizePlan 校验新增项目、状态与日期'
+### 1ф ["test/aiplan.test.js"]
+'自研监控小工具'
+### 1ф ["test/aiplan.test.js"]
+'瞎写'
+### 1ф ["test/aiplan.test.js"]
+'非法状态回落到默认值'
+### 1ф ["test/aiplan.test.js"]
+'进度被夹到 0-100'
+### 1ф ["test/aiplan.test.js"]
+'normalizePlan 从动作推断 intent，并原样接受 query'
+### 1ф ["test/aiplan.test.js"]
+'normalizePlan 处理非法输入'
+### 1ф ["test/aiplan.test.js"]
+'normalizePlan 还能处理待跟进、完成与进展三种动作'
+### 1ф ["test/aiplan.test.js"]
+'写压测报告'
+### 1ф ["test/aiplan.test.js"]
+'契约测试'
+### 1ф ["test/aiplan.test.js"]
+'指标收集完成'
+### 1ф ["test/aiplan.test.js"]
+'previewPlan 生成分组的人类可读预览'
+### 1ф ["test/aiplan.test.js"]
+'新项目'
+### 1ф ["test/aiplan.test.js"]
+'一句话'
+### 1ф ["test/aiplan.test.js"]
+'和主管对了一次口径'
+### 1ф ["test/aiplan.test.js"]
+'新增 1 个，修改 1 个，删除 1 个，待跟进 1 项，进展 1 条'
+### 1ф ["test/aiplan.test.js"]
+'applyPlan 一次把增删改查全部落到位'
+### 1ф ["test/aiplan.test.js"]
+'加 1 删 1，总数不变'
+### 1ф ["test/aiplan.test.js"]
+'原状态不被修改'
+### 1ф ["test/aiplan.test.js"]
+'applyPlan 对未知项目与空计划是安全的'
+### 1ф ["test/aiplan.test.js"]
+'planFromRules 能识别查询、新增、修改、删除、待跟进与记录'
+### 1ф ["test/aiplan.test.js"]
+'新增一个项目：自研监控小工具，放到其他项目'
+### 2ф ["test/aiplan.test.js","test/server.test.js"]
+'把订单结算服务重构的 DDL 改到下周五，进度调整到 80%'
+### 1ф ["test/aiplan.test.js"]
+'删掉数据中台订单域接入'
+### 1ф ["test/aiplan.test.js"]
+'给订单结算服务重构加一条待跟进：写压测报告，明天截止'
+### 1ф ["test/aiplan.test.js"]
+'planFromRules 匹配不到项目时给出可读提示而不是乱改'
+### 1ф ["test/aiplan.test.js"]
+'把那个啥的 DDL 改到月底'
+### 1ф ["test/aiplan.test.js"]
+'planSchemaDoc 与 projectSnapshot 给模型的上下文是稳定的'
+### 1ф ["test/analysis.test.js"]
+'项目一'
+### 1ф ["test/analysis.test.js"]
+'todayISO 使用本地日历日'
+### 1ф ["test/analysis.test.js"]
+'daysLeft / formatRemaining 覆盖逾期、当天、明天与未来'
+### 1ф ["test/analysis.test.js"]
+'已逾期 3 天'
+### 1ф ["test/analysis.test.js"]
+'还剩 10 天'
+### 1ф ["test/analysis.test.js"]
+'projectRisk 按优先级判定风险等级'
+### 1ф ["test/analysis.test.js"]
+'projectRisk 能识别时间已过但进度落后的项目'
+### 1ф ["test/analysis.test.js"]
+'projectRisk 的每个等级都带 label / tone / rank / detail'
+### 1ф ["test/analysis.test.js"]
+`期望 ${level}，实际 ${risk.level}`
+### 1ф ["test/analysis.test.js"]
+'sortByRisk 把危险项目排在最前，同级按剩余天数'
+### 1ф ["test/analysis.test.js"]
+'逾期'
+### 1ф ["test/analysis.test.js"]
+'紧急后'
+### 1ф ["test/analysis.test.js"]
+'紧急前'
+### 1ф ["test/analysis.test.js"]
+'clampProgress 与 openTodos 处理脏数据'
+### 1ф ["test/analysis.test.js"]
+'moduleRollup 与 moduleNames 覆盖固定模块和自定义模块'
+### 2ф ["test/analysis.test.js","test/views.test.js"]
+'副业试验'
+### 1ф ["test/analysis.test.js"]
+'overview 汇总状态、风险、待跟进与需关注清单'
+### 1ф ["test/analysis.test.js"]
+'找设计'
+### 1ф ["test/analysis.test.js"]
+'overview 在空列表下不抛错'
+### 1ф ["test/client-bundle.test.js"]
+'构建产物必须调用 window.__ModuleLoader__.load'
+### 1ф ["test/client-bundle.test.js"]
+`构建产物引用了基线之外的模块：${spec}`
+### 7ф ["test/client-bundle.test.js","test/insights.test.js","test/prompt.test.js","test/query.test.js","test/server.test.js","test/store.test.js","test/views.test.js"]
+'结算系统'
+### 1ф ["test/client-bundle.test.js"]
+'接口联调完成'
+### 1ф ["test/client-bundle.test.js"]
+'补齐验收用例'
+### 4ф ["test/client-bundle.test.js","test/insights.test.js","test/query.test.js","test/views.test.js"]
+'官网改版'
+### 1ф ["test/client-bundle.test.js"]
+'结算系统二期'
+### 1ф ["test/client-bundle.test.js"]
+'客户拜访材料'
+### 5ф ["test/client-bundle.test.js","test/insights.test.js","test/query.test.js","test/sample.test.js","test/views.test.js"]
+'内训课件'
+### 1ф ["test/client-bundle.test.js"]
+'构建产物用本包名注册，且只 require 共享基线'
+### 1ф ["test/client-bundle.test.js"]
+"\)/g)].map((match) => match[1])
+  const bare = [...new Set(specs.filter((spec) => !spec.includes('/')))]
+  assert.deepEqual(bare, ['react'])
+  assert.ok(!/^import\s/m.test(CODE), '产物里不应残留 ESM import')
+  assert.ok(!/^export\s/m.test(CODE), '产物里不应残留 ESM export')
+})
+
+test('插件导出 apply 与 inject', () => {
+  const plugin = loadPlugin()
+  assert.equal(typeof plugin.apply, 'function')
+  assert.deepEqual(plugin.inject, ['desktopWorkbenches'])
+})
+
+test('注册描述符：左侧嵌入式面板、标题、GitHub 仓库、布局边界', () => {
+  const { registrations, effects } = registerPlugin()
+  assert.equal(registrations.length, 1)
+  assert.equal(effects.length, 1)
+  assert.equal(typeof effects[0], 'function', 'register 的返回值必须交给 ctx.effect 管理')
+  const { descriptor, Component } = registrations[0]
+  assert.equal(descriptor.title, '项目总控台')
+  assert.match(descriptor.repository, /^https:\/\/github\.com\/[\w.-]+\/[\w.-]+$/)
+  assert.equal(descriptor.id, undefined, '新包不填写旧的 register({ id })')
+  assert.equal(descriptor.embedded, true, '左侧嵌入式面板需要 embedded')
+  assert.equal(descriptor.layout.businessSide, 'left')
+  assert.ok(descriptor.layout.businessWidth >= 0.25 && descriptor.layout.businessWidth <= 0.7)
+  assert.equal(typeof Component, 'function')
+})
+
+test('注册的面板是接数据的 ProjectConsole', () => {
+  const { plugin, registrations } = registerPlugin()
+  assert.equal(registrations[0].Component, plugin.ProjectConsole)
+  assert.equal(typeof plugin.ConsoleView, 'function')
+  assert.notEqual(plugin.ProjectConsole, plugin.ConsoleView)
+})
+
+test('没有项目时：页签、模块导航、KPI 与问一句都在', () => {
+  const { plugin } = registerPlugin()
+  const html = render(plugin, readyPortfolio([]))
+  assert.match(html, /项目总控台/)
+  for (const label of ['概览', '模块看板', '状态看板', '列表', '日历', '时间线', '待跟进']) {
+    assert.ok(html.includes(label), `缺少页签：${label}`)
+  }
+  assert.match(html, /role="
+### 1ф ["test/client-bundle.test.js"]
+"/)
+  assert.match(html, /智能视图/)
+  assert.match(html, /全部项目/)
+  assert.match(html, /项目总数/)
+  assert.match(html, /问一句/)
+  assert.match(html, /还没有项目/)
+  assert.match(html, /新建项目/)
+  assert.match(html, /AI 填充/)
+  assert.match(html, /已保存 · 修订 3/)
+})
+
+test('有数据时：概览渲染 KPI 与四个维度的图表', () => {
+  const { plugin } = registerPlugin()
+  const html = render(plugin, readyPortfolio(SAMPLE))
+  assert.match(html, /4 个项目 · 3 个模块/)
+  assert.match(html, /项目总数/)
+  assert.match(html, /需关注/)
+  assert.match(html, /风险分布/)
+  assert.match(html, /pc-donut/)
+  assert.match(html, /pc-legend/)
+  assert.match(html, /模块负载/)
+  assert.match(html, /pc-stacked/)
+  assert.match(html, /进度分布/)
+  assert.match(html, /pc-hist/)
+  assert.match(html, /负责人负载/)
+  assert.match(html, /pc-rank/)
+  assert.match(html, /需要马上处理/)
+  assert.match(html, /本周到期/)
+  assert.match(html, /结算系统二期/)
+  assert.match(html, /公司项目/)
+  assert.match(html, /pc-accent-indigo/)
+})
+
+test('侧栏按模块与会话维度给出计数，并带模块强调色', () => {
+  const { plugin } = registerPlugin()
+  const html = render(plugin, readyPortfolio(SAMPLE))
+  assert.match(html, /pc-rail-item/)
+  assert.match(html, /pc-rail-count/)
+  assert.match(html, /需关注/)
+  assert.match(html, /已逾期/)
+  assert.match(html, /有待跟进/)
+  assert.match(html, /已完成/)
+})
+
+test('读取失败时渲染错误提示与重试动作', () => {
+  const { plugin } = registerPlugin()
+  const html = render(plugin, {
+    status: 'error', error: '无法读取项目数据。', conflict: false, saving: false, revision: 0,
+    state: { version: 1, projects: [] }, reload: () => undefined, update: async () => true, setError: () => undefined
+  })
+  assert.match(html, /无法读取项目数据。/)
+  assert.match(html, /读取失败/)
+  assert.match(html, /重试/)
+})
+
+test('加载中渲染骨架屏而不是空白', () => {
+  const { plugin } = registerPlugin()
+  const html = render(plugin, {
+    status: 'loading', error: '', conflict: false, saving: false, revision: 0,
+    state: { version: 1, projects: [] }, reload: () => undefined, update: async () => true, setError: () => undefined
+  })
+  assert.match(html, /pc-skeleton/)
+  assert.ok(!html.includes('还没有项目'))
+})
+
+### 1ф ["test/insights.test.js"]
+`事项 ${id}`
+### 1ф ["test/insights.test.js"]
+'小李'
+### 3ф ["test/insights.test.js","test/query.test.js","test/views.test.js"]
+'小程序'
+### 1ф ["test/insights.test.js"]
+'无期项目'
+### 1ф ["test/insights.test.js"]
+'落后项目'
+### 1ф ["test/insights.test.js"]
+'moduleAccentMap 给每个模块固定颜色，顺序稳定'
+### 1ф ["test/insights.test.js"]
+'同样输入应得到同样映射'
+### 1ф ["test/insights.test.js"]
+'statusTone 覆盖固定状态并给未知状态兜底'
+### 1ф ["test/insights.test.js"]
+'随便'
+### 1ф ["test/insights.test.js"]
+'kpis 一次算清各维度数字'
+### 1ф ["test/insights.test.js"]
+'官网改版 10-09 在本周内'
+### 1ф ["test/insights.test.js"]
+'riskBreakdown 按风险从高到低且百分比合理'
+### 1ф ["test/insights.test.js"]
+'statusColumns 用固定状态顺序，列内按风险排序'
+### 1ф ["test/insights.test.js"]
+'moduleWorkload 给出每个模块的构成与占比'
+### 1ф ["test/insights.test.js"]
+'progressBuckets 覆盖 0 到 100 且总数守恒'
+### 1ф ["test/insights.test.js"]
+'ownerWorkload 按人聚合，未填负责人归到「未指定」'
+### 1ф ["test/insights.test.js"]
+'shiftMonth / monthLabel 跨年正确'
+### 1ф ["test/insights.test.js"]
+'坏值'
+### 1ф ["test/insights.test.js"]
+'2026 年 10 月'
+### 1ф ["test/insights.test.js"]
+'calendarMonth 生成 6 周网格并标出今天与当月'
+### 1ф ["test/insights.test.js"]
+`周数异常：${model.weeks.length}`
+### 1ф ["test/insights.test.js"]
+'首周应包含上月补齐的日期'
+### 1ф ["test/insights.test.js"]
+'10 月 31 天'
+### 1ф ["test/insights.test.js"]
+'calendarMonth 把 DDL 与待跟进放到正确的日期格'
+### 1ф ["test/insights.test.js"]
+'事项 t2'
+### 1ф ["test/insights.test.js"]
+'同一格内不应重复'
+### 1ф ["test/insights.test.js"]
+'逾期的待跟进要标红'
+### 1ф ["test/insights.test.js"]
+'calendarMonth 对空数据与无日期项目安全'
+### 1ф ["test/insights.test.js"]
+'timelineModel 给出每行的起止位置与今天标记'
+### 1ф ["test/insights.test.js"]
+'条不能超出右边界'
+### 1ф ["test/insights.test.js"]
+'按截止日期排序，未排期排最后'
+### 1ф ["test/insights.test.js"]
+'timelineModel 对空数据与超长跨度都安全'
+### 1ф ["test/insights.test.js"]
+'followUpBuckets 按紧迫度分桶并排序'
+### 1ф ["test/insights.test.js"]
+'10-09 在本周内'
+### 1ф ["test/insights.test.js"]
+'10-20 更晚'
+### 1ф ["test/insights.test.js"]
+'headline 随数据变化给出不同结论'
+### 1ф ["test/prompt.test.js"]
+'把结算流程搬到线上'
+### 2ф ["test/prompt.test.js","test/views.test.js"]
+'财务'
+### 2ф ["test/prompt.test.js","test/store.test.js"]
+'完成对账接口'
+### 1ф ["test/prompt.test.js"]
+'等财务确认口径'
+### 2ф ["test/prompt.test.js","test/store.test.js"]
+'联调支付'
+### 1ф ["test/prompt.test.js"]
+'写验收用例'
+### 1ф ["test/prompt.test.js"]
+'projectBrief 输出关键字段、进展与待跟进'
+### 1ф ["test/prompt.test.js"]
+'projectBrief 对空项目也不抛错'
+### 1ф ["test/prompt.test.js"]
+'空项目'
+### 1ф ["test/prompt.test.js"]
+'portfolioBrief 按风险排序拼接多个项目'
+### 1ф ["test/prompt.test.js"]
+'正常项目'
+### 1ф ["test/prompt.test.js"]
+'逾期项目'
+### 1ф ["test/prompt.test.js"]
+'buildAnalysisPrompt 带上日期、范围与输出结构'
+### 1ф ["test/prompt.test.js"]
+'单项目'
+### 1ф ["test/prompt.test.js"]
+'docKinds 暴露四类文档，deliveryHint 给出交付说明'
+### 1ф ["test/prompt.test.js"]
+'buildDocDraft 生成四类文档草稿'
+### 1ф ["test/prompt.test.js"]
+'单项目文档草稿只包含该项目'
+### 1ф ["test/prompt.test.js"]
+'别的项目'
+### 1ф ["test/query.test.js"]
+'客户结算系统'
+### 2ф ["test/query.test.js","test/views.test.js"]
+'对账'
+### 1ф ["test/query.test.js"]
+'空问题与空数据都有可读的回答'
+### 1ф ["test/query.test.js"]
+'有什么风险'
+### 1ф ["test/query.test.js"]
+'概览类问句给出整体分布'
+### 1ф ["test/query.test.js"]
+'风险类问句只列出需要关注的项目'
+### 1ф ["test/query.test.js"]
+'已完成项目不应出现在风险清单里'
+### 1ф ["test/query.test.js"]
+'时间窗口问句按 DDL 过滤'
+### 1ф ["test/query.test.js"]
+'哪些项目本周到期？'
+### 1ф ["test/query.test.js"]
+'哪些已经逾期了'
+### 1ф ["test/query.test.js"]
+'这个月要交付什么'
+### 1ф ["test/query.test.js"]
+'待跟进问句列出未完成事项并可按逾期过滤'
+### 1ф ["test/query.test.js"]
+'逾期的待跟进有哪些'
+### 1ф ["test/query.test.js"]
+'提到项目名时聚焦该项目'
+### 1ф ["test/query.test.js"]
+'小程序现在什么情况？'
+### 1ф ["test/query.test.js"]
+'无法识别的问题回退到需关注清单并给出问法提示'
+### 1ф ["test/query.test.js"]
+'帮我看下那个啥'
+### 1ф ["test/query.test.js"]
+'示例问句都能得到非空回答'
+### 1ф ["test/query.test.js"]
+`${example} 的回答过短`
+### 1ф ["test/sample.test.js"]
+'每种项目模块都生成了至少 3 个示例项目'
+### 1ф ["test/sample.test.js"]
+`示例项目数量偏少：${projects.length}`
+### 1ф ["test/sample.test.js"]
+`${module} 只有 ${count} 个示例`
+### 1ф ["test/sample.test.js"]
+'示例项目字段完整、类型正确、id 唯一'
+### 1ф ["test/sample.test.js"]
+`id 重复：${project.id}`
+### 1ф ["test/sample.test.js"]
+'示例项目应带「示例」标签'
+### 1ф ["test/sample.test.js"]
+'日常工作里必须有技术分享准备与季度汇报'
+### 1ф ["test/sample.test.js"]
+'缺少技术分享准备'
+### 1ф ["test/sample.test.js"]
+'缺少季度汇报'
+### 1ф ["test/sample.test.js"]
+'每个示例都要有一句话说明'
+### 1ф ["test/sample.test.js"]
+'示例内容都是研发工作语境'
+### 1ф ["test/sample.test.js"]
+'服务'
+### 1ф ["test/sample.test.js"]
+'接口'
+### 1ф ["test/sample.test.js"]
+'告警'
+### 1ф ["test/sample.test.js"]
+'测试'
+### 1ф ["test/sample.test.js"]
+'代码'
+### 1ф ["test/sample.test.js"]
+`示例内容里应出现研发词汇：${needle}`
+### 1ф ["test/sample.test.js"]
+'报销'
+### 1ф ["test/sample.test.js"]
+'供应商比价'
+### 1ф ["test/sample.test.js"]
+'拜访材料'
+### 1ф ["test/sample.test.js"]
+`示例里不该再有旧案例：${stale}`
+### 1ф ["test/sample.test.js"]
+'示例数据覆盖各种风险等级，第一眼就能看出差别'
+### 1ф ["test/sample.test.js"]
+`缺少 ${level} 的示例项目`
+### 1ф ["test/sample.test.js"]
+'示例的待跟进事项太少'
+### 1ф ["test/sample.test.js"]
+'示例数据在给定日期上是相对生成的，换一天也成立'
+### 1ф ["test/sample.test.js"]
+'同样的日期生成同样的结果（可重复）'
+### 1ф ["test/sample.test.js"]
+'示例数据能直接通过存储层的结构收敛'
+### 1ф ["test/sample.test.js"]
+'不该有示例项目被 sanitize 丢掉'
+### 1ф ["test/sample.test.js"]
+'侧栏能按模块统计出示例数据'
+### 1ф ["test/sample.test.js"]
+'sampleSummary 说明数量与模块分布'
+### 1ф ["test/sample.test.js"]
+`${module} 应出现在说明里`
+### 1ф ["test/server.test.js"]
+`缺少路由 ${method} ${path}`
+### 1ф ["test/server.test.js"]
+'服务端入口的必须是规范要求的样子'
+### 1ф ["test/server.test.js"]
+'Config 必须是 Schemastery schema，不能是普通对象'
+### 1ф ["test/server.test.js"]
+'路由都挂在自己的前缀下，且每个路径只注册一次'
+### 1ф ["test/server.test.js"]
+`${route.path} 不在本工作台前缀下`
+### 1ф ["test/server.test.js"]
+'GET /meta 报告插件名与数据目录'
+### 1ф ["test/server.test.js"]
+'GET/POST /state 完成一次完整读写，并对旧版本号返回 409'
+### 1ф ["test/server.test.js"]
+'模型可用时，/ai 走模型并把 JSON 收敛成计划'
+### 1ф ["test/server.test.js"]
+'{"intent":"update","reply":"把进度调到 80%","actions":['
+### 1ф ["test/server.test.js"]
+'{"op":"update","target":"订单结算服务重构","changes":{"progress":80,"dueDate":"下周五"}},{"op":"delete","target":"不存在的项目"}]}'
+### 1ф ["test/server.test.js"]
+'进度调到 80%，DDL 改到下周五'
+### 1ф ["test/server.test.js"]
+'找不到的项目要被丢掉'
+### 1ф ["test/server.test.js"]
+'模型输出带代码块和废话也能解析'
+### 1ф ["test/server.test.js"]
+'好的，这是计划：\n```json\n{"intent":"add","reply":"新增一个项目","actions":[{"op":"add","name":"服务网格试点","module":"公司项目","dueDate":"月底"}]}\n```'
+### 1ф ["test/server.test.js"]
+'新增服务网格试点'
+### 1ф ["test/server.test.js"]
+'服务网格试点'
+### 1ф ["test/server.test.js"]
+'模型只回 query 时用回复作答，没有回复则退回本地问答'
+### 1ф ["test/server.test.js"]
+'{"intent":"query","reply":"本周只有官网改版要交付。","actions":[]}'
+### 1ф ["test/server.test.js"]
+'这周要交付什么'
+### 1ф ["test/server.test.js"]
+'本周只有官网改版要交付。'
+### 1ф ["test/server.test.js"]
+'模型没给回复时应由本地问答补上'
+### 1ф ["test/server.test.js"]
+'模型报错、没有 JSON、没有服务时都退回本地规则'
+### 1ф ["test/server.test.js"]
+'流以 error 结束'
+### 1ф ["test/server.test.js"]
+'配额不足'
+### 1ф ["test/server.test.js"]
+'输出没有 JSON'
+### 1ф ["test/server.test.js"]
+'我不知道该怎么改'
+### 1ф ["test/server.test.js"]
+'没有 llm 服务'
+### 1ф ["test/server.test.js"]
+'没有默认模型'
+### 1ф ["test/server.test.js"]
+'stream 直接抛错'
+### 1ф ["test/server.test.js"]
+'适配器挂了'
+### 1ф ["test/server.test.js"]
+'把订单结算服务重构的进度改成 90%'
+### 1ф ["test/server.test.js"]
+'没有可用模型时，/ai 退回本地规则并说明原因'
+### 1ф ["test/server.test.js"]
+'测试宿主没有 llm 服务，应退回规则解析'
+### 1ф ["test/server.test.js"]
+'/ai 对空指令返回 4xx'
+### 1ф ["test/server.test.js"]
+'extractJson 容忍代码块与前后废话，assemblyText 只取文本块'
+### 1ф ["test/server.test.js"]
+'好的，这是计划：{"intent":"add","actions":[]} 完'
+### 1ф ["test/server.test.js"]
+'没有 JSON'
+### 1ф ["test/server.test.js"]
+'POST /state 对非法 JSON 与超大请求体返回 4xx'
+### 1ф ["test/store.test.js"]
+'空目录读出空文档且版本号为 0'
+### 1ф ["test/store.test.js"]
+'读取不应创建任何文件'
+### 1ф ["test/store.test.js"]
+'写入后版本号自增并可原样读回'
+### 1ф ["test/store.test.js"]
+'版本号过期时拒绝写入并给出 409'
+### 1ф ["test/store.test.js"]
+'写入会收敛脏数据：丢弃无名项目、夹紧进度、修掉重复 id'
+### 1ф ["test/store.test.js"]
+'有效'
+### 1ф ["test/store.test.js"]
+'seededAt 会被保留，但仍受结构收敛约束'
+### 1ф ["test/store.test.js"]
+'非法时间戳应被清掉'
+### 1ф ["test/store.test.js"]
+'sanitizeState 拒绝非对象输入'
+### 1ф ["test/store.test.js"]
+'损坏的数据文件不会被静默覆盖'
+### 1ф ["test/store.test.js"]
+'{ 这不是 JSON'
+### 1ф ["test/store.test.js"]
+'meta 返回目录、文件与计数，便于探活'
+### 1ф ["test/store.test.js"]
+'并发写入被串行化，只有一个成功'
+### 1ф ["test/store.test.js"]
+'没有数据目录时报错而不是写到别处'
+### 1ф ["test/views.test.js"]
+'设计'
+### 1ф ["test/views.test.js"]
+'副业原型'
+### 1ф ["test/views.test.js"]
+'智能视图覆盖需关注/逾期/本周/待跟进/已完成'
+### 1ф ["test/views.test.js"]
+'matchesSmartView 按条件筛选'
+### 1ф ["test/views.test.js"]
+'空视图表示不过滤'
+### 1ф ["test/views.test.js"]
+'ATTENTION_LEVELS 只含危险与观察等级'
+### 1ф ["test/views.test.js"]
+'searchText 覆盖名称、负责人、标签、待跟进与最近进展'
+### 1ф ["test/views.test.js"]
+'张三'
+### 1ф ["test/views.test.js"]
+'联调完成'
+### 1ф ["test/views.test.js"]
+'补齐用例'
+### 1ф ["test/views.test.js"]
+`${needle} 应可被搜到`
+### 1ф ["test/views.test.js"]
+'selectProjects 同时应用模块、智能视图与关键字'
+### 1ф ["test/views.test.js"]
+'不存在的词'
+### 1ф ["test/views.test.js"]
+'selectProjects 结果始终按风险排序'
+### 1ф ["test/views.test.js"]
+'summarize 汇总计数与平均进度'
+### 1ф ["test/views.test.js"]
+'railModules 固定模块在前，自定义模块在后并带计数'
+### 1ф ["test/views.test.js"]
+'公司项目里有一个逾期'
+### 1ф ["test/views.test.js"]
+'其他项目下的阻塞计入需关注'
+### 1ф ["test/views.test.js"]
+'railViews 给出每个智能视图的计数'
+### 1ф ["test/views.test.js"]
+'groupByModule 丢掉空模块并按风险排序组内项目'
+### 1ф ["test/views.test.js"]
+'组内也按风险排序'
+### 1ф ["test/views.test.js"]
+'空的模块'
+### 1ф ["test/views.test.js"]
+'groupByModule 对空列表返回空数组'
